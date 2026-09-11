@@ -1,0 +1,86 @@
+[
+  {
+    "asset": "asphalt_02",
+    "file": "Art/Textures/PolyHaven/asphalt_02/asphalt_02_diff_2k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/asphalt_02/asphalt_02_diff_2k.jpg",
+    "sha256": "28f5ba8690553f192c0e5e1a5ff40f34765b4b93f4cc7059b1a3e9c795b6c28c",
+    "license": "CC0-1.0",
+    "authors": {
+      "Rob Tuytel": "All"
+    }
+  },
+  {
+    "asset": "asphalt_02",
+    "file": "Art/Textures/PolyHaven/asphalt_02/asphalt_02_nor_gl_1k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_nor_gl_1k.jpg",
+    "sha256": "42a1c381b53204e83a982db2864479a30bc127bbdeebb1006f8ee51bff099df3",
+    "license": "CC0-1.0",
+    "authors": {
+      "Rob Tuytel": "All"
+    }
+  },
+  {
+    "asset": "asphalt_02",
+    "file": "Art/Textures/PolyHaven/asphalt_02/asphalt_02_nor_dx_1k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_nor_dx_1k.jpg",
+    "sha256": "789ceaee56f6e85b7e5837e8b0fd472ff3637ec7c72b1002b7b56eaf667d9b8c",
+    "license": "CC0-1.0",
+    "authors": {
+      "Rob Tuytel": "All"
+    }
+  },
+  {
+    "asset": "asphalt_02",
+    "file": "Art/Textures/PolyHaven/asphalt_02/asphalt_02_rough_1k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_rough_1k.jpg",
+    "sha256": "70ba3edc65525eb4dc366cf010ca7ae0bd34e0251ff0225c2dad627a873d0712",
+    "license": "CC0-1.0",
+    "authors": {
+      "Rob Tuytel": "All"
+    }
+  },
+  {
+    "asset": "concrete_wall_003",
+    "file": "Art/Textures/PolyHaven/concrete_wall_003/concrete_wall_003_diff_2k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/concrete_wall_003/concrete_wall_003_diff_2k.jpg",
+    "sha256": "751ac658d1335d0903f198176253a2cbd06457bbb1f549dc2fa04e4b96f915c3",
+    "license": "CC0-1.0",
+    "authors": {
+      "Dimitrios Savva": "Photography",
+      "Rico Cilliers": "Processing"
+    }
+  },
+  {
+    "asset": "concrete_wall_003",
+    "file": "Art/Textures/PolyHaven/concrete_wall_003/concrete_wall_003_nor_gl_1k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_003/concrete_wall_003_nor_gl_1k.jpg",
+    "sha256": "9ab358a9d51aa2a361103cf6587ee0b598fa57ad8f38b40cccc8015b867938ac",
+    "license": "CC0-1.0",
+    "authors": {
+      "Dimitrios Savva": "Photography",
+      "Rico Cilliers": "Processing"
+    }
+  },
+  {
+    "asset": "concrete_wall_003",
+    "file": "Art/Textures/PolyHaven/concrete_wall_003/concrete_wall_003_nor_dx_1k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_003/concrete_wall_003_nor_dx_1k.jpg",
+    "sha256": "a3cdcc0fd917cc78275db54d336d09dbbd9166a55d8b505216f7a5cb8f406296",
+    "license": "CC0-1.0",
+    "authors": {
+      "Dimitrios Savva": "Photography",
+      "Rico Cilliers": "Processing"
+    }
+  },
+  {
+    "asset": "concrete_wall_003",
+    "file": "Art/Textures/PolyHaven/concrete_wall_003/concrete_wall_003_rough_1k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_003/concrete_wall_003_rough_1k.jpg",
+    "sha256": "dca206a636ecca1ced60fb66bc0ec15d71b3c611179fec6ee5dad96786efcc25",
+    "license": "CC0-1.0",
+    "authors": {
+      "Dimitrios Savva": "Photography",
+      "Rico Cilliers": "Processing"
+    }
+  }
+]

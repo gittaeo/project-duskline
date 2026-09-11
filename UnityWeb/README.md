@@ -2,6 +2,21 @@
 
 기존 Unreal 프로젝트와 같은 세계관·탐색/루팅/생존/탈출 루프를 C#으로 구현한 별도 Unity 프로젝트입니다. **Unity 6.2, `6000.2.0f1`**과 WebGL Build Support를 사용합니다. 상위 폴더는 Unreal 프로젝트이며, Unity Hub에서는 반드시 이 `UnityWeb` 폴더를 추가하세요.
 
+## Unity 버전·도구·언어·스킬
+
+| 구분 | 실제 사용 및 확인 상태 |
+|---|---|
+| 엔진 | **Unity 6.2 / 6000.2.0f1**, revision `eed1c594c913`. `ProjectSettings/ProjectVersion.txt` 기준 |
+| 빌드 모듈 | 해당 에디터의 WebGL Build Support, IL2CPP → WebAssembly. 실제 Web 빌드 성공 |
+| 렌더링 | Built-in Render Pipeline / Standard 셰이더, PBR Albedo·Normal·Metallic/Smoothness, 실시간 방향광·그림자·안개 |
+| 언어 | C# 게임플레이·에디터 빌더·검사, HTML/CSS/JavaScript Web 템플릿, JavaScript `.jslib` 테스트 보고, Python 로컬 서버, PowerShell 빌드 실행 |
+| 엔진 기능 | CharacterController, 내장 Input API, NavMesh/NavMeshAgent, ScriptableObject, IMGUI 한국어 HUD. URP/HDRP·외부 입력 패키지는 사용하지 않음 |
+| 개발·검증 도구 | Unity Hub/Editor, Git, Python HTTP 서버, Codex 브라우저 도구로 Web 실행 화면·콘솔·통합 검사 확인 |
+| Codex 스킬 | 전용 Unity 스킬은 적용하지 않음. 범용 computer-use 문서를 참고했으며 실제 Web 검증은 브라우저 도구 사용. 프로젝트 실행에 Codex 스킬 설치 불필요 |
+| 외부 아트 | Poly Haven `asphalt_02`, `concrete_wall_003` (CC0), Noto Sans KR 기반 정적 폰트 (OFL). 유료 에셋 없음. 이미지 생성 AI는 사용하지 않음 |
+
+에디터 Play Mode 검사는 이 환경의 라이선스 오류로 완료하지 못했습니다. C# 컴파일·Web 빌드·브라우저 통합 검사와 구분하며 자세한 결과는 [검증 보고서](Docs/Validation.md)에 기록합니다.
+
 ## 실행
 
 1. Unity Hub → Add project from disk → 이 폴더 선택.
@@ -42,6 +57,17 @@ python .\Scripts\ServeWeb.py
 가치 180 이상을 확보하고 지도 북동쪽 비콘으로 이동해 E를 누릅니다. 반경 3.5m 구역 안에서 8초를 유지하면 성공합니다. 제한 시간은 10분입니다. 노란 지도 표시는 물자, 청록색 표시는 탈출 지점, 흰색은 플레이어입니다.
 
 ## 구조와 차이
+
+### 그래픽 개선과 수정 위치
+
+기존 맵 동선과 UI 구성을 유지하면서 아스팔트 바닥·풍화 콘크리트 벽에 PBR 텍스처를 적용하고 창틀·건물 하단부·옥상 설비와 조명을 보완했습니다. 캐릭터와 물자 모델은 기본 도형인 프로토타입 상태입니다.
+
+- `Assets/Duskline/Resources/Art`: 실제 런타임 텍스처·머티리얼.
+- `Editor/ArtMaterialBuilder.cs`: 2K 컬러, 1K 노멀·거칠기 임포트. 거칠기를 `1 - roughness`로 변환해 Standard 셰이더의 Smoothness 알파에 저장.
+- `Scripts/SurfaceArt.cs`: 재질 배정과 미터 기준 UV. 바닥 4m, 콘크리트 3m 단위로 반복해 큰 면의 텍스처 늘어짐을 줄임.
+- `Scripts/WorldBootstrap.cs`: 창틀·외벽 장식과 조명·안개. 장식에는 충돌이나 NavMesh 장애물을 추가하지 않음.
+
+`Prepare Project`와 Web 빌드는 ArtMaterialBuilder가 관리하는 두 머티리얼과 파생 PNG를 다시 생성합니다. 이를 직접 편집하면 다음 Prepare 때 덮어써지므로, 변경은 빌더 코드에 반영하거나 별도 머티리얼 이름으로 분리하세요. [공유 원본·출처·라이선스와 Unreal 적용 안내](../Art/README.md)를 함께 확인하세요.
 
 - `Assets/Duskline/Scripts`: 체력, 스태미나, 인벤토리, 근접 공격, 이동·카메라, 상호작용, 루팅, AI, 결과 상태, HUD를 분리.
 - `Resources/Items`: ScriptableObject 아이템 4종. 중첩·가치·무게·치유량 편집 가능.

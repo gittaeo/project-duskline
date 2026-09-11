@@ -21,6 +21,7 @@ public static class BuildTools {
             var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
             new GameObject("WorldBootstrap").AddComponent<WorldBootstrap>();EditorSceneManager.SaveScene(scene,ScenePath);
         }
+        ArtMaterialBuilder.Prepare();
         EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene(ScenePath,true)};
         PlayerSettings.companyName="Duskline";PlayerSettings.productName="Duskline Web";PlayerSettings.bundleVersion="0.1.0";
         PlayerSettings.defaultWebScreenWidth=1280;PlayerSettings.defaultWebScreenHeight=720;

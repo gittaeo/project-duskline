@@ -17,8 +17,10 @@ public sealed class WorldBootstrap : MonoBehaviour {
         Instance=this;Application.targetFrameRate=60;QualitySettings.vSyncCount=0;
         baseMaterial=Resources.Load<Material>("DuskMaterial");
         if(!baseMaterial){Debug.LogError("DuskMaterial missing. Run Duskline > Prepare Project before playing.");enabled=false;return;}
-        RenderSettings.ambientLight=new Color(.42f,.48f,.53f);RenderSettings.fog=true;RenderSettings.fogColor=new Color(.18f,.25f,.3f);RenderSettings.fogMode=FogMode.ExponentialSquared;RenderSettings.fogDensity=.008f;
-        var sun=new GameObject("Late afternoon light").AddComponent<Light>();sun.type=LightType.Directional;sun.transform.rotation=Quaternion.Euler(43,-35,0);sun.color=new Color(1,.83f,.61f);sun.intensity=1.3f;sun.shadows=LightShadows.Soft;
+        SurfaceArt.Initialize(baseMaterial);
+        RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Trilight;RenderSettings.ambientSkyColor=new Color(.38f,.47f,.56f);RenderSettings.ambientEquatorColor=new Color(.28f,.32f,.37f);RenderSettings.ambientGroundColor=new Color(.13f,.14f,.16f);
+        RenderSettings.fog=true;RenderSettings.fogColor=new Color(.3f,.38f,.44f);RenderSettings.fogMode=FogMode.ExponentialSquared;RenderSettings.fogDensity=.005f;
+        var sun=new GameObject("Late afternoon light").AddComponent<Light>();sun.type=LightType.Directional;sun.transform.rotation=Quaternion.Euler(28,-35,0);sun.color=new Color(1,.82f,.61f);sun.intensity=1.2f;sun.shadows=LightShadows.Soft;sun.shadowStrength=.82f;sun.shadowBias=.03f;
         Block("Ground",new Vector3(0,-.25f,0),new Vector3(100,.5f,80),new Color(.16f,.2f,.22f),true);
         Block("North wall",new Vector3(0,2.5f,40),new Vector3(100,5,.5f),dark,true);
         Block("South wall",new Vector3(0,2.5f,-40),new Vector3(100,5,.5f),dark,true);
@@ -68,7 +70,7 @@ public sealed class WorldBootstrap : MonoBehaviour {
     void OnDestroy(){if(navigation.valid)navigation.Remove();if(Instance==this)Instance=null;}
     GameObject Block(string name,Vector3 position,Vector3 scale,Color color,bool navigable,Transform parent=null,bool collision=false){
         var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.name=name;go.transform.position=position;go.transform.localScale=scale;if(parent)go.transform.SetParent(parent,true);
-        var mat=new Material(baseMaterial);mat.color=color;go.GetComponent<Renderer>().sharedMaterial=mat;
+        SurfaceArt.Apply(go,name,navigable,baseMaterial,color);
         // Explicit type reference keeps primitive collision bindings in stripped Web players.
         var collider=go.GetComponent<BoxCollider>();if(!collider)collider=go.AddComponent<BoxCollider>();
         if(!navigable&&!collision)Destroy(collider);
@@ -78,9 +80,19 @@ public sealed class WorldBootstrap : MonoBehaviour {
     void Building(Vector3 center,Vector3 size){
         Block("Closed building",center+Vector3.up*size.y*.5f,size,concrete,true);
         Block("Roof rim",center+Vector3.up*(size.y+.1f),new Vector3(size.x+.3f,.25f,size.z+.3f),dark,false);
+        Block("Facade base",center+new Vector3(0,.45f,size.z*.5f+.04f),new Vector3(size.x,.9f,.08f),concrete,false);
+        Block("Facade base",center+new Vector3(size.x*.5f+.04f,.45f,0),new Vector3(.08f,.9f,size.z),concrete,false);
+        Block("Rooftop ventilation",center+new Vector3(0,size.y+.6f,0),new Vector3(2.4f,1.2f,2),dark,false);
+        for(float y=3.7f;y<size.y;y+=2.5f)Block("Facade trim",center+new Vector3(0,y,0),new Vector3(size.x+.12f,.12f,size.z+.12f),dark,false);
         for(float y=2;y<size.y;y+=2.5f)for(float z=-size.z*.5f+2;z<size.z*.5f;z+=3){
             Block("Window",center+new Vector3(size.x*.5f+.015f,y,z),new Vector3(.03f,1.1f,1.2f),new Color(.12f,.22f,.27f),false);
             Block("Window",center+new Vector3(-size.x*.5f-.015f,y,z),new Vector3(.03f,1.1f,1.2f),new Color(.14f,.26f,.29f),false);
+            Block("Window sill",center+new Vector3(size.x*.5f+.07f,y-.6f,z),new Vector3(.18f,.12f,1.4f),concrete,false);
+            Block("Window sill",center+new Vector3(-size.x*.5f-.07f,y-.6f,z),new Vector3(.18f,.12f,1.4f),concrete,false);
+        }
+        for(float y=2;y<size.y;y+=2.5f)for(float x=-size.x*.5f+1.8f;x<size.x*.5f-1;x+=2.7f){
+            Block("Window",center+new Vector3(x,y,-size.z*.5f-.03f),new Vector3(1.15f,1.15f,.06f),dark,false);
+            Block("Window sill",center+new Vector3(x,y-.63f,-size.z*.5f-.08f),new Vector3(1.35f,.12f,.18f),concrete,false);
         }
     }
     Transform MakeBody(Transform parent,Color jacket,bool infected){
