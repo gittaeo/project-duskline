@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 801cf50d4b26b834b881cecf1c10acb2, type: 3}
+  m_Name: mission
+  m_EditorClassIdentifier: Assembly-CSharp::Duskline.ItemDefinition
+  id: mission
+  displayName: "\uD1B5\uC2E0 \uAE30\uB85D \uBAA8\uB4C8"
+  description: "\uD574\uC6D0\uC2DC \uAD6C\uC870 \uC2E0\uD638 \uBCF5\uAD6C \uC790\uB8CC"
+  kind: 3
+  weight: 1
+  value: 65
+  maxStack: 2
+  healing: 30
+  iconColor: {r: 0.3, g: 0.85, b: 0.7, a: 1}

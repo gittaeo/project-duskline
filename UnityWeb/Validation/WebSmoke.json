@@ -1,0 +1,10 @@
+{
+  "unity": "6000.2.0f1",
+  "target": "WebGL",
+  "browser": "Codex In-app Browser",
+  "passed": 23,
+  "failed": 0,
+  "browserErrorLogs": 0,
+  "observedReport": "PASS: 23 Web integration checks; no runtime errors",
+  "scope": "Separate DUSKLINE_SMOKE_TEST build executing production gameplay components in WebAssembly"
+}

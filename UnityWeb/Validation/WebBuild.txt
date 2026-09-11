@@ -1,0 +1,6 @@
+Result: Succeeded
+Errors: 0
+Warnings: 0
+Bytes: 32427049
+Duration: 00:01:03.2688354
+Unity: 6000.2.0f1

@@ -1,5 +1,7 @@
 # 개발 인수인계 — Project Duskline
 
+> 이 문서는 최초 Unreal 버전의 인수인계입니다. 이후 추가된 Unity Web 프로젝트는 `UnityWeb/README.md`와 `UnityWeb/Docs/Validation.md`를 먼저 확인하세요. Unity 버전은 별도 엔진·C# 코드·빌드 체계를 사용합니다.
+
 ## 현재 위치
 
 2026-09-11에 빈 Windows 작업공간에서 작성한 UE 5 C++ 소스 프로젝트입니다. 사용자 목표는 약 10분 동안 탐색 → 루팅 → 전투/은신 → 탈출을 플레이하는 수직 슬라이스입니다. 원본 요구사항은 OriginalRequirements.md에 보존했습니다.

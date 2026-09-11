@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>황혼선 · Duskline Web</title>
+<style>*{box-sizing:border-box}body{margin:0;overflow:hidden;background:#081317;color:#dcebe8;font:14px system-ui,sans-serif}header{height:52px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #243a3e}header strong{letter-spacing:2px;color:#6de3bf}button{border:1px solid #456563;background:#142a2e;color:#dcebe8;padding:8px 15px;cursor:pointer}main{position:relative;width:100%;height:calc(100vh - 80px);display:flex;align-items:center;justify-content:center}canvas{display:block;min-height:0;width:100%;height:100%;object-fit:contain;background:#122128;outline:none}#loading{position:absolute;text-align:center;line-height:2;width:340px}progress{width:100%;accent-color:#6de3bf}footer{height:28px;text-align:center;color:#819d9f;font-size:12px}#error{color:#ffc28e;white-space:pre-wrap}</style></head>
+<body><header><strong>DUSKLINE / 황혼선</strong><button id="fullscreen" type="button">전체 화면</button></header><main><canvas id="unity-canvas" width="1280" height="720" tabindex="0" aria-label="황혼선 3인칭 생존 게임"></canvas><div id="loading"><h2>해원시로 진입하는 중</h2><progress id="progress" value="0" max="1"></progress><p>게임 데이터를 불러오고 있습니다.</p><div id="error"></div></div></main><footer>WASD 이동 · 마우스 시점 · E 상호작용 · ESC 일시정지</footer>
+<script src="Build/{{{ LOADER_FILENAME }}}"></script><script>
+const canvas=document.getElementById('unity-canvas');
+createUnityInstance(canvas,{
+ dataUrl:'Build/{{{ DATA_FILENAME }}}',frameworkUrl:'Build/{{{ FRAMEWORK_FILENAME }}}',codeUrl:'Build/{{{ CODE_FILENAME }}}',
+ streamingAssetsUrl:'StreamingAssets',companyName:'Duskline',productName:'황혼선',productVersion:'0.1.0',
+ matchWebGLToCanvasSize:true,devicePixelRatio:Math.min(window.devicePixelRatio||1,1.5)
+},p=>document.getElementById('progress').value=p).then(instance=>{window.unityInstance=instance;document.getElementById('loading').remove();document.getElementById('fullscreen').onclick=()=>instance.SetFullscreen(1);canvas.focus();}).catch(e=>{document.getElementById('error').textContent=String(e);});
+window.addEventListener('keydown',e=>{if(e.target===canvas&&['Tab',' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();});
+</script></body></html>
