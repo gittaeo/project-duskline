@@ -28,7 +28,7 @@ public sealed class PlayerMotor : MonoBehaviour {
         Sprinting=input.sqrMagnitude>.01f&&!Crouched&&!exhausted&&Input.GetKey(KeyCode.LeftShift)&&motor.isGrounded;
         if(Sprinting&&!stamina.Spend(sprintDrain*Time.deltaTime)){Sprinting=false;exhausted=true;}
         Vector3 move=Quaternion.Euler(0,view.Yaw,0)*new Vector3(input.x,0,input.y);
-        if(move.sqrMagnitude>.01f)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(move),Time.deltaTime*15);
+        if(move.sqrMagnitude>.01f&&!combat.Swinging)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(move),Time.deltaTime*15);
         if(motor.isGrounded&&vertical<0)vertical=-2;
         if(Input.GetKeyDown(KeyCode.Space)&&motor.isGrounded&&!Crouched)vertical=Mathf.Sqrt(jumpHeight*24);
         vertical-=24*Time.deltaTime;
@@ -37,7 +37,7 @@ public sealed class PlayerMotor : MonoBehaviour {
         if(Time.time>=traceAt){Trace();traceAt=Time.time+.08f;}
         if(Input.GetKeyDown(KeyCode.E)){Trace();if(focused&&focused is IInteractable target&&target.CanInteract(this))target.Interact(this);}
         if(Input.GetKeyDown(KeyCode.Q)){var r=inventory.UseMedicine(health);run.Notify(r.Success?"응급 처치 · 의약품 1개 사용":r.Reason);}
-        if(Input.GetMouseButtonDown(0)){transform.rotation=Quaternion.Euler(0,view.Yaw,0);if(!combat.Attack())run.Notify("공격 대기 또는 스태미나 부족");}
+        if(Input.GetMouseButtonDown(0)){if(!combat.Swinging)transform.rotation=Quaternion.Euler(0,view.Yaw,0);if(!combat.Attack())run.Notify("공격 대기 또는 스태미나 부족");}
         if(run.ExtractionLeft>0&&run.exit&&!run.exit.Contains(transform.position))run.CancelExtraction();
     }
     void Trace(){

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 namespace Duskline {
 [DefaultExecutionOrder(-100)]
-public sealed class WorldBootstrap : MonoBehaviour {
+public sealed partial class WorldBootstrap : MonoBehaviour {
     readonly List<NavMeshBuildSource> sources=new List<NavMeshBuildSource>();
     readonly List<LootContainer> crates=new List<LootContainer>();
     readonly List<EnemyBrain> enemies=new List<EnemyBrain>();
@@ -37,6 +37,7 @@ public sealed class WorldBootstrap : MonoBehaviour {
         Block("East cover",new Vector3(34,1,-5),new Vector3(5,2,1.5f),concrete,true);
         for(int z=-35;z<36;z+=5){Block("Lane marking",new Vector3(-6,.012f,z),new Vector3(.12f,.015f,2),gold,false);Block("East lane marking",new Vector3(34,.012f,z),new Vector3(.12f,.015f,2),gold,false);}
         for(int i=0;i<12;i++){float x=-46+(i%4)*28,z=-34+(i/4)*31;Block("Street pole",new Vector3(x,2.4f,z),new Vector3(.14f,4.8f,.14f),dark,false);Block("Street lamp",new Vector3(x,4.8f,z),new Vector3(.55f,.15f,.35f),gold,false);}
+        BuildHaewonArt();
         BakeNavigation();
         var run=new GameObject("RunDirector").AddComponent<RunDirector>();
         var player=new GameObject("Player");player.layer=8;player.transform.position=new Vector3(-41,.1f,-32);
@@ -95,19 +96,8 @@ public sealed class WorldBootstrap : MonoBehaviour {
             Block("Window sill",center+new Vector3(x,y-.63f,-size.z*.5f-.08f),new Vector3(1.35f,.12f,.18f),concrete,false);
         }
     }
-    Transform MakeBody(Transform parent,Color jacket,bool infected){
-        var root=new GameObject("Visual body").transform;root.SetParent(parent,false);
-        Block("Torso",parent.position+Vector3.up*1.13f,new Vector3(.65f,.7f,.38f),jacket,false,root);
-        Block("Head",parent.position+Vector3.up*1.7f,new Vector3(.38f,.4f,.38f),infected?new Color(.58f,.46f,.41f):new Color(.65f,.67f,.63f),false,root);
-        Block("Visor",parent.position+new Vector3(0,1.75f,.2f),new Vector3(.31f,.09f,.04f),infected?new Color(1,.25f,.18f):gold,false,root);
-        Block("Left leg",parent.position+new Vector3(-.18f,.4f,0),new Vector3(.22f,.7f,.25f),dark,false,root);
-        Block("Right leg",parent.position+new Vector3(.18f,.4f,0),new Vector3(.22f,.7f,.25f),dark,false,root);
-        Block("Arm",parent.position+new Vector3(-.45f,1.06f,0),new Vector3(.2f,.65f,.2f),jacket,false,root);
-        Block("Arm",parent.position+new Vector3(.45f,1.06f,0),new Vector3(.2f,.65f,.2f),jacket,false,root);
-        if(!infected)Block("Pack",parent.position+new Vector3(0,1.16f,-.3f),new Vector3(.45f,.55f,.25f),gold,false,root);
-        return root;
-    }
-    Transform Weapon(Transform parent){var pivot=new GameObject("Melee pivot").transform;pivot.SetParent(parent,false);pivot.localPosition=new Vector3(.45f,1,0);Block("Steel baton",pivot.position+new Vector3(0,.2f,.4f),new Vector3(.1f,.1f,.8f),gold,false,pivot);return pivot;}
+    Transform MakeBody(Transform parent,Color jacket,bool infected){return DetailedBody(parent,infected);}
+    Transform Weapon(Transform parent){return OverheadClub(parent);}
     void SpawnEnemy(Vector3[] route){
         var go=new GameObject("Infected "+enemies.Count);go.layer=10;
         go.transform.position=NavMesh.SamplePosition(route[0],out var hit,3,NavMesh.AllAreas)?hit.position:route[0];

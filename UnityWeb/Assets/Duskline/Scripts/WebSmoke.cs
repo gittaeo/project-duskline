@@ -38,6 +38,15 @@ public sealed class WebSmoke : MonoBehaviour {
         var enemy=world.Enemies[0];Vector3 first=enemy.transform.position;p.noise.Emit(100,8);
         yield return new WaitForSeconds(1.5f);
         Check(enemy.State==EnemyState.Investigate,"noise investigation");Check(Vector3.Distance(first,enemy.transform.position)>.2f,"AI follows NavMesh");
+        enemy.enabled=false;enemy.GetComponent<NavMeshAgent>().isStopped=true;
+        Move(p,enemy.transform.position+Vector3.back*1.3f);p.transform.rotation=Quaternion.identity;
+        var victim=enemy.GetComponent<Health>();float before=victim.Current;
+        Check(p.combat.Attack(),"overhead attack starts");Check(victim.Current==before,"windup has no early damage");
+        Check(!p.combat.Attack(),"swing cannot retrigger");
+        yield return new WaitForSeconds(.32f);Check(victim.Current==before,"raised club still has no damage");
+        yield return new WaitForSeconds(.2f);Check(victim.Current==before-p.combat.damage,"downstroke impact damage");
+        yield return new WaitForSeconds(.4f);Check(victim.Current==before-p.combat.damage,"single hit per swing");
+        enemy.enabled=true;
         foreach(var ai in world.Enemies){ai.GetComponent<Health>().Damage(1000);Check(ai.State==EnemyState.Dead&&!ai.GetComponent<MeleeCombat>().Attack(),"dead AI cannot attack");}
         foreach(var item in Resources.LoadAll<ItemDefinition>("Items"))if(item.kind==ItemKind.Mission)p.inventory.Add(item,3);
         Move(p,run.exit.transform.position+Vector3.back*1.5f);Check(run.RequestExtraction(),"start extraction");Move(p,run.exit.transform.position+Vector3.back*8);

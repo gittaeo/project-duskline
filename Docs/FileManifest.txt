@@ -116,6 +116,8 @@ UnityWeb/Assets/Duskline/Resources/Items/mission.asset
 UnityWeb/Assets/Duskline/Resources/Items/mission.asset.meta
 UnityWeb/Assets/Duskline/Resources/Items/scrap.asset
 UnityWeb/Assets/Duskline/Resources/Items/scrap.asset.meta
+UnityWeb/Assets/Duskline/Resources/WorldText.shader
+UnityWeb/Assets/Duskline/Resources/WorldText.shader.meta
 UnityWeb/Assets/Duskline/Scenes.meta
 UnityWeb/Assets/Duskline/Scenes/Duskline.unity
 UnityWeb/Assets/Duskline/Scenes/Duskline.unity.meta
@@ -126,6 +128,8 @@ UnityWeb/Assets/Duskline/Scripts/ExtractionPoint.cs
 UnityWeb/Assets/Duskline/Scripts/ExtractionPoint.cs.meta
 UnityWeb/Assets/Duskline/Scripts/GameHUD.cs
 UnityWeb/Assets/Duskline/Scripts/GameHUD.cs.meta
+UnityWeb/Assets/Duskline/Scripts/HaewonArt.cs
+UnityWeb/Assets/Duskline/Scripts/HaewonArt.cs.meta
 UnityWeb/Assets/Duskline/Scripts/Health.cs
 UnityWeb/Assets/Duskline/Scripts/Health.cs.meta
 UnityWeb/Assets/Duskline/Scripts/Interactable.cs
@@ -162,6 +166,7 @@ UnityWeb/Assets/WebGLTemplates/Duskline/OFL.txt
 UnityWeb/Assets/WebGLTemplates/Duskline/OFL.txt.meta
 UnityWeb/Assets/WebGLTemplates/Duskline/index.html
 UnityWeb/Assets/WebGLTemplates/Duskline/index.html.meta
+UnityWeb/Docs/ArtDirection.md
 UnityWeb/Docs/Validation.md
 UnityWeb/Packages/manifest.json
 UnityWeb/Packages/packages-lock.json

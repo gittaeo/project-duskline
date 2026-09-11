@@ -1,6 +1,6 @@
 Result: Succeeded
 Errors: 0
 Warnings: 0
-Bytes: 42715041
-Duration: 00:00:59.7429092
+Bytes: 42775182
+Duration: 00:01:00.5416663
 Unity: 6000.2.0f1
