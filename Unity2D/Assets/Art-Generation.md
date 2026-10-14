@@ -1,0 +1,13 @@
+# Art generation — 2026-10-11
+
+Built-in image_gen. Reference: D:/Unity/Duskline-Design/Mockups/Duskline-Art-Mockup-01.png. Background and Actors saved in Assets/Resources for actual runtime use.
+
+## Background prompt
+
+Create one standalone 16:9 landscape background asset for the approved DUSKLINE TOP SCAVENGE scene in the reference. Match its meticulously detailed crisp semi-realistic pixel art, blue twilight Korean abandoned pharmacy alley, overhead cables, shutters, amber wall lamp right, layered blue apartment skyline. Pure side scrolling perpendicular camera. Entire image is ONLY the world environment: remove all UI, titles, borders, text overlays, people, zombies, weapons, treasure chest, particles. Storefront sign 약국 may remain as scenery. No foreground objects covering the walkable path. IMPORTANT straight continuous flat walkable pavement at exactly 82 percent down the image, foreground pavement below, buildings above. No stairs obstructing horizontal travel. Camera perspective subtle on background only, flat side-on walking plane. Crisp pixel clusters and hard pixels, no bokeh, no gaussian blur, no photos, no painted strokes. Color fidelity to reference. This will be the backdrop of a real Unity playable scene, not a concept poster.
+
+## Actors prompt
+
+Using approved DUSKLINE art as visual reference, produce ONLY a transparent game sprite sheet, exactly 4 columns by 2 rows, 8 equally sized cells, no labels, no borders, no background, no shadows outside characters. Every cell has generous transparent padding. Side profile facing RIGHT throughout, entire body fully inside each cell, feet at same baseline, same scale, 4 to 5 heads tall. Crisp detailed intentional pixel art, no smooth painting. Top row SAME female survivor in black bob hair, red scarf, worn black jacket, grey trousers, brown boots, tan satchel, sword. Cell 1 relaxed ready stance sword low forward; cell 2 walking left leg forward; cell 3 walking right leg forward; cell 4 active horizontal sword slash extended forward with body lean, sword fully contained. Bottom row SAME gaunt grey zombie with ragged brown-grey shirt, dark trousers, hunched posture, no excessive gore. Cell1 hunched idle, cell2 shambling left leg forward, cell3 shambling right leg forward, cell4 arms extended forward attack. Consistent pixel sizes, identical character proportions across columns, no isometric camera, no extra characters, no floating weapons. Each cell 1/4 canvas width and 1/2 height. True transparent alpha.
+
+Alpha inspected: RGBA, 1,128,658 fully transparent pixels of 1,572,864. Source sheet 1536x1024. Frame 4 has a custom wider slice to retain left leg. Frame alignment and animation quality still need visual verification.

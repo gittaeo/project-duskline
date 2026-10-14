@@ -1,0 +1,2 @@
+Original embedded font copyright: (c) 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'.
+The bundled derived font uses the family name Duskline Sans. Original font license metadata is retained. See SourceHanSans-OFL.txt for the SIL Open Font License 1.1.

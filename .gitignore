@@ -14,3 +14,18 @@ __pycache__/
 .env
 .env.*
 !.env.example
+# Unity generated and local-only files
+**/[Ll]ibrary/
+**/[Tt]emp/
+**/[Oo]bj/
+**/[Ll]ogs/
+**/[Uu]ser[Ss]ettings/
+**/[Bb]uilds/
+**/Save/
+**/MemoryCaptures/
+**/Recordings/
+**/.vs/
+*.csproj
+*.sln
+*.user
+*.log

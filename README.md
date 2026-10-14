@@ -1,95 +1,43 @@
-# 황혼선 — Project Duskline
+# 황혼선 — Duskline
 
-## 현재 인수인계 상태 — 작업 중 소스 저장
+**Unity 6.2 기반 2D 횡스크롤 태그 액션 생존 RPG**입니다. 해온시에서 좀비를 피해 물자를 회수하고 동료와 교대하며 싸워, 제7대피소를 유지하는 싱글플레이 시제품입니다.
 
-2026-09-11 사용자 요청으로 개발을 중단했습니다. Unity의 해원시 비주얼·몽둥이 내려치기 변경을 포함하지만 마지막 간판 셰이더 수정은 아직 빌드·실행 검증 전입니다. **다음 개발자는 [Unity README의 중단 시점·미완료 작업·재개 순서](UnityWeb/README.md#개발-중단-시점-인수인계--2026-09-11)를 먼저 읽어 주세요.** 이전 PBR 버전의 검증 결과와 최신 작업 중 소스의 상태를 구분해야 합니다. Unreal 엔진 미설치와 전체 빌드·플레이 미검증 상태는 유지됩니다.
+## 현재 개발 버전
 
-## 엔진별 프로젝트
+`Unity2D/`가 최신 프로젝트입니다. Unity Hub에서 이 폴더를 열고 `Assets/Scenes/Slice.unity`를 실행하세요. 에디터 버전은 **6000.2.0f1**입니다.
 
-| 버전 | 프로젝트 위치 | 안내 |
-|---|---|---|
-| Unreal Engine 5 | 저장소 루트 | 이 문서의 Unreal 설정 절차 |
-| Unity 6 / Web | `UnityWeb/` | [Unity Web 실행·빌드 안내](UnityWeb/README.md) |
+- 이현·도윤·하린·서린의 전투 태그, 공격 취소·교대 예약, 2인 협공.
+- 캐릭터별 8프레임 보행과 준비·타격·반동·회복 스킬 연출. 걷기·공격 시트 배율 보정.
+- 연결된 횡스크롤 수색 맵, 출정별 네 분위기, 돌진형·중장갑·산성 투척형·철도 집행자 보스.
+- Tab 지도 출정·안전 귀환, 무기 LV6 강화와 보스 코어, 3층 쉘터 시설·생산·습격.
+- 1~3장 임무와 4장 전반부: 재희의 교역로 표식 회수, 주황 우의 단서 및 보스 처치 후 귀환.
 
-Unity Hub에는 `UnityWeb` 폴더를 추가합니다. 두 버전의 게임플레이 코드는 독립적으로 유지합니다. 아래 기존 구현 상태와 절차는 **Unreal 버전 기준**이며, Unity 검증 결과는 [Unity 검증 보고서](UnityWeb/Docs/Validation.md)에 별도로 기록합니다.
+## 조작
 
-Unity에는 해원시 폐도시 분위기·생존자 장비와 몽둥이 내려치기를 추가했습니다. [비주얼·모션 적용 범위](UnityWeb/Docs/ArtDirection.md)에 참고 이미지와의 차이, 실제 구현 및 Unreal에 남은 작업을 구분했습니다.
+A/D·방향키 이동, 아래 웅크리기, Space 점프, J 공격, Shift 회피, K 스킬, L 필살기, Q 태그, E 상호작용, H 치료, Tab 지도, I 기록, F2 연출 감소.
 
-가상의 해원시에서 물자를 회수하고 탈출하는 3인칭 싱글플레이 생존 액션 프로토타입입니다. 기본 제한 시간 600초, 요구 가치 180, 탈출 대기 8초입니다. 기본 도형 기반 맵이며 Unity 버전에는 무료 CC0 PBR 텍스처를 적용했습니다. 외부 유료 에셋은 없습니다.
+## 빌드
 
-**현재 상태: C++ 소스 구현 및 일부 독립 규칙 검증 완료. Unreal Engine 전체 컴파일, 맵 생성 실행, 플레이 검증은 아직 완료하지 못했습니다. 완성된 실행 파일이나 검증된 수직 슬라이스로 간주하면 안 됩니다.**
+PowerShell 예시(에디터 경로는 설치 위치에 맞게 수정):
 
-## Unreal 버전·도구·언어·스킬
-
-| 구분 | 실제 사용 및 확인 상태 |
-|---|---|
-| 엔진 | **UE 5.5 이상 API를 기준으로 작성**. 엔진 미설치로 정확한 실행 버전은 미확정. `EngineAssociation`도 비어 있음 |
-| Windows 빌드 환경 | Visual Studio Build Tools 2022 **17.14.40**, MSVC **14.44.35207**, Windows SDK **10.0.26100.0** 설치 |
-| 언어 | C++ 게임플레이, C# `Build.cs`/`Target.cs` 빌드 설정, Python 에디터 맵 생성·정적 검사, PowerShell 빌드·검사 실행, INI 설정 |
-| 엔진 기능 | Enhanced Input, CharacterMovement, AI Perception, NavigationSystem, UMG, Data Asset. 선언·소스 구현 기준이며 엔진 실행 검증은 남아 있음 |
-| 개발·검증 도구 | Git, Python 정적 검사, MSVC 독립 C++ 규칙 검사. Epic Games Launcher 설치. UnrealHeaderTool/UnrealBuildTool 및 PIE는 아직 실행하지 못함 |
-| Codex 스킬 | 전용 Unreal 스킬은 적용하지 않음. 소스 작성·CLI 검사·공식 문서 확인으로 진행. 설치해야 하는 별도 Codex 스킬 의존성 없음 |
-| 외부 아트 | Poly Haven CC0 아스팔트·콘크리트 원본 포함. **Unreal 머티리얼 적용과 렌더링은 미검증**, 아래 가이드에 따라 에디터에서 적용 필요 |
-
-무료 도구와 무료 에셋만 도입했으며 유료 에셋·플러그인은 구매하지 않았습니다. Unity에서 성공한 빌드와 테스트 결과는 Unreal 검증 결과에 포함하지 않습니다.
-
-[공유 텍스처 출처·라이선스·Unreal 적용 절차](Art/README.md)를 확인하세요. 다음 개발자는 실제 설치한 UE 버전으로 빌드·PIE를 확인한 뒤 이 표와 `EngineAssociation`을 함께 갱신해야 합니다.
-
-## 다른 환경에서 개발 이어가기
-
-```sh
-git clone https://github.com/gittaeo/project-duskline.git
-cd project-duskline
+```powershell
+$env:DUSKLINE_BUILD_OUTPUT = 'D:/Builds/Duskline'
+& 'D:/Unity/6000.2.0f1/Editor/Unity.exe' -batchmode -nographics -quit -projectPath "$PWD/Unity2D" -buildTarget Win64 -executeMethod SliceBuild.Build -logFile 'D:/Builds/duskline-build.log'
 ```
 
-먼저 [개발 인수인계](Docs/Handoff.md)를 읽으세요. 원본 요구사항부터 구현 구조, 검증 근거, 남은 작업까지 다음 문서로 연결됩니다.
+출력 경로를 지정하지 않으면 프로젝트의 상위 `Builds/Duskline`에 저장됩니다. 빌드 과정에서 모델 검사를 실행합니다. `--capture <출력접두사>` 인자로 실행하면 보행·스킬 자동 화면 검사 후 종료합니다. 검사용 실행은 사용자 저장을 수정하지 않습니다.
 
-- [원본 요구사항](Docs/OriginalRequirements.md): 기능·안정성·완료 기준 전체
-- [개발 인수인계](Docs/Handoff.md): 환경 복원, 다음 작업 순서, 주의할 검증 공백
-- [구조와 설계](Docs/Architecture.md): 클래스 책임과 데이터 흐름
-- [에디터 설정](Docs/EditorSetup.md): 맵 생성·NavMesh·Blueprint 설정
-- [테스트 계획](Docs/TestPlan.md): 자동 테스트 및 수동 인수 조건
-- [구현 보고서](Docs/ImplementationReport.md): 작성 범위와 미검증 사항
+## 검증과 범위
 
-이 저장소에는 소스와 맵 생성 스크립트가 포함됩니다. Unreal Engine, 빌드 도구, 생성된 바이너리와 맵은 포함하지 않습니다.
+v0.10: 모델 검사164개, Windows 빌드 오류0·경고0. 실제 실행에서 보행32/32 프레임과 스킬4종 확인. 결과는 [검증 기록](Docs/Validation-v0.10.md), 변경 내용은 [CHANGELOG](CHANGELOG.md)를 참고하세요.
 
-## 빠른 실행
+4장 후반 배신 사건과 성채 본편, 자유 가구 배치, 무기별 상세 제작 트리는 아직 미구현입니다. 지도는 연결된 기존 지형이며 절차적 지형 생성이 아닙니다. 새 4장 임무는 기존 구역을 재사용합니다.
 
-1. Epic Games Launcher에 로그인하고 최신 정식 UE 5를 설치합니다. 엔진 설치본이 아직 없어 프로젝트의 `EngineAssociation`은 비워 두었습니다. 코드의 API 기준은 UE 5.5 이상이며 설치된 버전에서 UHT/UBT 검증이 필요합니다.
-2. 프로젝트 루트에서 `powershell -ExecutionPolicy Bypass -File .\Scripts\Build.ps1 -EngineRoot 'C:\Program Files\Epic Games\UE_5.x'`를 실행합니다. `UE_5.x`를 실제 경로로 바꿉니다.
-3. `.uproject` 우클릭 → Switch Unreal Engine version에서 설치 버전을 지정하고 프로젝트를 엽니다. 첫 실행에는 맵 미생성 경고가 있을 수 있습니다.
-4. 에디터 Tools → Execute Python Script에서 `Content/Python/build_duskline.py`를 실행합니다.
-5. [에디터 설정](Docs/EditorSetup.md)에 따라 NavMeshBoundsVolume을 배치하고 경로를 빌드합니다. `/Game/Maps/Duskline`을 저장하고 Play를 누릅니다.
+## 문서
 
-## 조작법
+- [PRD](Docs/PRD/Duskline-Shelter-PRD.md)
+- [전체 이야기 초안](Docs/Story/Duskline-Storyline.md): 기획 범위이며 전체가 구현된 것은 아닙니다.
+- [아트 제작 기록](Docs/Art/): 내장 image_gen 생성 및 참조·프롬프트 기록.
+- 이전 Unreal·3D 프로젝트 파일을 제거하고 최신 Unity2D 프로젝트로 전환했습니다.
 
-| 입력 | 기능 |
-|---|---|
-| WASD / 마우스 | 이동 / 시점 |
-| Shift 유지 | 달리기. 고갈 후 다시 누르면 재시도 |
-| Ctrl | 웅크리기 전환 |
-| Space | 점프 |
-| 좌클릭 | 카메라 방향으로 근접 공격 |
-| E | 조준한 컨테이너 열기 → 다시 E로 모두 획득 / 비콘 탈출 요청 |
-| Q | 의약품 1개 사용, 체력 최대 30 회복 |
-| R / 결과 화면 버튼 | 결과 후 전체 맵 재시작 |
-
-중앙 조준점으로 근거리 물체를 바라보세요. 컨테이너는 먼저 내용물을 보여 주고 다음 입력에서 획득합니다. 무게나 슬롯이 부족하면 가능한 수량만 가져오고 나머지는 컨테이너에 남습니다. 북동쪽 `(4200, 3200)` 원통 비콘 주변에서 E를 누르면 탈출을 요청합니다.
-
-## 작성된 기능
-
-- Health, Stamina, Inventory, Combat, NoiseEmitter 독립 컴포넌트
-- C++ Enhanced Input 매핑, 3인칭 카메라, 걷기·달리기·웅크리기·점프
-- 인터페이스 기반 근거리 상호작용, Data Asset 아이템 4종, 시드 기반 루팅
-- 중첩·무게·슬롯 제한 및 부분 처리 결과, 의약품 소비
-- 한 공격 내 중복 피해 방지, 장애물 차폐, 쿨다운과 스태미나 비용
-- AI Perception 시각·청각과 6개 상태의 타이머 기반 AI
-- 결과 상태 단일 전이, 구역 이탈 즉시 취소, 시간 초과 우선 판정
-- 이벤트 구독 UMG HUD, 피격·공격 텍스트 연출, 결과와 재시작
-- 100m × 80m 그레이박스 생성 스크립트: 7개 컨테이너, 3마리 AI, 실내와 우회로
-
-## 검증 및 제한
-
-MSVC 독립 규칙 테스트 20개 통과. Unreal 컴포넌트 자동 테스트 4개 그룹을 작성했으나 엔진 미설치로 미실행입니다. [테스트 계획](Docs/TestPlan.md)과 [구현 보고서](Docs/ImplementationReport.md)를 확인하세요.
-
-실제 `.umap`과 `.uasset`은 에디터 스크립트 실행 시 생성됩니다. NavMesh는 수동 단계입니다. 애니메이션·사운드·저장·멀티플레이·게임패드·최종 아트는 포함하지 않습니다. 10분은 제한 시간이며 실제 플레이 길이와 난이도는 플레이 테스트 후 조정해야 합니다.
+실행 파일·Unity 캐시·개인 저장 파일은 Git에 포함하지 않습니다. `DuskFont.ttf`는 Source 계열 폰트를 Duskline Sans로 이름 변경한 파일이며 원본 저작권 표기와 [SIL OFL](Unity2D/ThirdPartyNotices/SourceHanSans-OFL.txt)을 유지합니다.

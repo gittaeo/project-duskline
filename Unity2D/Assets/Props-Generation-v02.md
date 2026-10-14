@@ -1,0 +1,6 @@
+
+## Props
+
+내장 image_gen으로 생성. 최종 에셋 Resources/Props.png. 런타임에서 알파 경계를 찾아 네 셀을 분리하고 상자 열림·방어문 파손 상태를 표시합니다.
+
+Create a transparent 2x2 equally spaced pixel art game prop atlas matching the gritty detailed realistic pixel style of the reference. NO characters, no scenery, no text. Top left: CLOSED old military salvage supply chest of dark olive wood, worn brass corners, iron straps, small central latch. Top right: exactly SAME chest OPEN with hinged lid raised and a subtle amber treasure glow from inside, same size and camera. Bottom left: sturdy improvised shelter barricade gate, weathered timber vertical posts, diagonal braced wooden cross planks, rusty metal mesh, bolts, small amber warning lamp; front-on side scrolling 2D view. Bottom right: same barricade damaged with a broken plank, still upright. Grounded bases, generous fully transparent padding in every cell, objects never cross cell boundaries. Crisp intentional pixel clusters, authentic scratches, materials and edge lighting, no smooth vector shapes, no photo background, no gradients outside object silhouettes. Each prop isolated. Both chests same base width, both gates same size. Strict 2 columns x2 rows. Transparent RGBA background.
