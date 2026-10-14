@@ -2,6 +2,26 @@
 
 **Unity 6.2 기반 2D 횡스크롤 태그 액션 생존 RPG**입니다. 해온시에서 좀비를 피해 물자를 회수하고 동료와 교대하며 싸워, 제7대피소를 유지하는 싱글플레이 시제품입니다.
 
+## 플레이 화면
+
+v0.11 Windows 실행 빌드에서 캡처한 1280×720 화면입니다. 모션 검증 모드에서 적을 비운 상태로 보행·공격·스킬을 촬영했습니다.
+
+**서린 · 폐상가 보행**
+
+![서린 · 폐상가 보행](Docs/Screenshots/serin-walk.png)
+
+**이현 · 올려치기**
+
+![이현 · 올려치기](Docs/Screenshots/ihyeon-attack.png)
+
+**도윤 · 철쇄 진동**
+
+![도윤 · 철쇄 진동](Docs/Screenshots/doyun-skill.png)
+
+**하린 · 집중 사격**
+
+![하린 · 집중 사격](Docs/Screenshots/harin-skill.png)
+
 ## 현재 개발 버전
 
 `Unity2D/`가 최신 프로젝트입니다. Unity Hub에서 이 폴더를 열고 `Assets/Scenes/Slice.unity`를 실행하세요. 에디터 버전은 **6000.2.0f1**입니다.
