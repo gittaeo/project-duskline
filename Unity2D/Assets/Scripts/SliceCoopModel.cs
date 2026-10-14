@@ -15,7 +15,7 @@ public sealed partial class SliceModel {
    int attacker=coopPulse==0?coopOutgoing:coopIncoming;coopPulse++;
    float reach=attacker==2?7:attacker==3?4:3;Emit("coop-impact",coopX);
    foreach(var e in enemies)if(e.hp>0&&e.delay<=0&&(e.x-coopX)*coopFace>-.5f&&Math.Abs(e.x-coopX)<reach&&Math.Abs(e.y-coopY)<1.8f){
-    lastDamage=progress.weapon+1;e.hp-=lastDamage;e.hurt=e.boss?.08f:.6f;if(!e.boss)e.attack=e.dash=0;
+    lastDamage=WeaponPower(attacker)+1;e.hp-=lastDamage;e.hurt=e.boss?.08f:.6f;if(!e.boss)e.attack=e.dash=0;
     if(e.hp<=0){runKills++;if(e.boss){lastEventX=e.x;DefeatBoss();}}
     Emit(e.hp<=0?"down":"hit",e.x);
    }

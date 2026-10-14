@@ -12,7 +12,7 @@ public static class SliceBuild {
  static readonly List<string> checks=new List<string>();
  public static void Build(){
   Directory.CreateDirectory(Output+"/Validation");
-  foreach(string name in new[]{"Alley","Actors","Combat","Shelter","Yard","Props","IhyeonMotion","IhyeonCombat","Residents","TagActors","Railway","Brute","ShelterFloor2","ShelterFloor3","NewResidents","SkillActors","WorldEnemies","SerinActors-v3","PartyWalk","SerinWalk","IhyeonWalk8","DoyunWalk8","HarinWalk8","SerinWalk8"}){
+  foreach(string name in new[]{"Alley","Actors","Combat","Shelter","Yard","Props","IhyeonMotion","IhyeonCombat","Residents","TagActors","Railway","Brute","ShelterFloor2","ShelterFloor3","NewResidents","SkillActors","WorldEnemies","SerinActors-v3","PartyWalk","SerinWalk","IhyeonWalk8","DoyunWalk8","HarinWalk8","SerinWalk8","TaeoSuhyeong"}){
    var t=(TextureImporter)AssetImporter.GetAtPath("Assets/Resources/"+name+".png");t.textureType=TextureImporterType.Default;t.isReadable=true;t.alphaIsTransparency=true;t.mipmapEnabled=false;t.filterMode=FilterMode.Point;t.textureCompression=TextureImporterCompression.Uncompressed;t.maxTextureSize=4096;t.npotScale=TextureImporterNPOTScale.None;t.SaveAndReimport();
   }
   Check();
@@ -117,6 +117,11 @@ public static class SliceBuild {
   m.Depart();m.enemies.Clear();m.x=.2f;m.Tick(.02f,0,false,false,false,true);Assert(m.runLoreMask==0,"Collected lore cannot duplicate");m.x=86;m.Tick(.02f,0,false,false,false,true);Assert(m.runLoreMask==0,"Later lore locked behind story progress");
   var loreSave=JsonUtility.FromJson<Progress>(JsonUtility.ToJson(m.progress));loreSave.Validate();Assert(loreSave.loreMask==1,"Lore survives save roundtrip");loreSave.loreMask=255;loreSave.Validate();Assert(loreSave.loreMask==127,"Unknown lore bits removed");
   m=new SliceModel(new Progress{chapter=7});m.Depart();m.enemies.Clear();m.x=86;m.Tick(.02f,0,false,false,false,true);Assert(m.runLoreMask==64,"Fortress record unlocks with raincoat mission");
+  var sig=new Progress{chapter=6,weapon=4,metal=500,cores=20};m=new SliceModel(sig);Assert(!m.ForgeSignature(),"Blueprint required for signature forge");m.Depart();m.enemies.Clear();m.x=58;Assert(m.TalkWitness()&&m.carryingBlueprint,"Suhyeong hands over blueprint");m.ReturnHome(false);Assert(!sig.resonanceBlueprint&&!m.carryingBlueprint,"Failed return loses blueprint");m.Depart();m.enemies.Clear();m.x=58;m.TalkWitness();m.ReturnHome(true);Assert(sig.resonanceBlueprint,"Safe return banks blueprint");
+  Assert(m.ForgeSignature()&&sig.metal==440&&sig.cores==18&&m.SignatureRank==1,"Forge charges exact resources");Assert(m.WeaponPower(0)==6&&m.WeaponPower(1)==4,"Signature damage belongs to its owner");m.activeHero=1;Assert(m.SignatureRank==0,"Tag does not inherit another signature");m.activeHero=0;Assert(m.ForgeSignature()&&m.ForgeSignature()&&!m.ForgeSignature(),"Signature has three ranks");
+  m.Depart();Assert(!m.ForgeSignature(),"Field forging blocked");
+  var signatureSave=JsonUtility.FromJson<Progress>(JsonUtility.ToJson(sig));signatureSave.Validate();Assert(signatureSave.signatureRanks[0]==3&&signatureSave.resonanceBlueprint,"Signature and blueprint save roundtrip");var legacy=new Progress{signatureRanks=null};legacy.Validate();Assert(legacy.signatureRanks.Length==4&&legacy.signatureRanks[0]==0,"Legacy saves initialize signature ranks");
+  m=new SliceModel(new Progress{chapter=6});m.Depart();m.enemies.Clear();m.x=58;m.enemies.Add(new SliceModel.Enemy{x=59,hp=4});m.TalkWitness();Assert(!m.carryingBlueprint,"Witness requires safe conversation distance");
   Directory.CreateDirectory(Output+"/Validation");File.WriteAllText(Output+"/Validation/model-checks.txt",checks.Count+" checks passed\n"+string.Join("\n",checks));Debug.Log("DUSKLINE_V10_CHECKS_OK "+checks.Count);
  }
 }

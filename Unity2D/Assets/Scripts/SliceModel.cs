@@ -4,7 +4,7 @@ namespace Duskline.Slice {
 public enum Place { Shelter, Expedition, Raid }
 [Serializable] public sealed partial class Progress {
  public int version=10,chapter,water,bandages,boards,metal,expeditions,weapon=1,gate=100;public bool raidPending,prologueSeen;
- public void Validate(){version=10;chapter=Math.Max(0,Math.Min(8,chapter));water=Math.Max(0,water);bandages=Math.Max(0,bandages);boards=Math.Max(0,boards);metal=Math.Max(0,Math.Min(99999,metal));expeditions=Math.Max(0,expeditions);weapon=Math.Max(1,Math.Min(6,weapon));gate=Math.Max(0,Math.Min(100,gate));loreMask&=127;ValidateExpansion();sorties=Math.Max(0,sorties);cores=Math.Max(0,cores);bossKills=Math.Max(0,bossKills);}
+ public void Validate(){version=10;chapter=Math.Max(0,Math.Min(8,chapter));water=Math.Max(0,water);bandages=Math.Max(0,bandages);boards=Math.Max(0,boards);metal=Math.Max(0,Math.Min(99999,metal));expeditions=Math.Max(0,expeditions);weapon=Math.Max(1,Math.Min(6,weapon));gate=Math.Max(0,Math.Min(100,gate));ValidateSignatures();loreMask&=127;ValidateExpansion();sorties=Math.Max(0,sorties);cores=Math.Max(0,cores);bossKills=Math.Max(0,bossKills);}
 }
 public sealed partial class SliceModel {
  public sealed class Enemy { public float x,y,vy,attack,hurt,cooldown,memory,delay,dash,direction=-1;public int hp=4,maxHp=4;public bool runner,brute,boss,spitter,enraged,gateTarget,hit; }
@@ -31,7 +31,7 @@ public sealed partial class SliceModel {
  void ResetCombat(){coopTimer=coopElapsed=0;coopPulse=0;tagBuffer=0;acids.Clear();ResetAction();y=vy=attack=attackElapsed=comboGrace=roll=rollCooldown=attackLock=0;queued=attackHit=crouching=false;velocityX=landing=0;combo=0;invulnerable=.5f;}
  public bool Depart(){
   if(place!=Place.Shelter||progress.raidPending)return false;
-  place=Place.Expedition;shelterFloor=1;x=-5.4f;face=1;runLoreMask=0;carried=missionMask=runWater=runBandages=runBoards=runFood=0;rescued=false;runKills=0;ResetCombat();enemies.Clear();supplies.Clear();
+  place=Place.Expedition;shelterFloor=1;x=-5.4f;face=1;carryingBlueprint=false;runLoreMask=0;carried=missionMask=runWater=runBandages=runBoards=runFood=0;rescued=false;runKills=0;ResetCombat();enemies.Clear();supplies.Clear();
   float[] positions={3.8f,9,15,22,26,33,39,44,49,54,63,70,78,86};
   for(int i=0;i<positions.Length;i++)enemies.Add(new Enemy{x=positions[i],runner=i%3==2&&i<10,brute=i>=10&&i%2==0,hp=i>=10&&i%2==0?14:i%3==2?5:4});
   float[] locations={.2f,16,31,47,55,69,86};int[] amounts={10,12,14,18,24,30,36};
@@ -52,6 +52,7 @@ public sealed partial class SliceModel {
  }
  public bool ReturnHome(bool success){
   if(place!=Place.Expedition)return false;
+  bool bankedBlueprint=success&&carryingBlueprint&&!progress.resonanceBlueprint;if(bankedBlueprint)progress.resonanceBlueprint=true;carryingBlueprint=false;
   if(success)progress.loreMask|=runLoreMask;runLoreMask=0;
   bool advance=success&&MissionReady;bool productive=success&&carried>0;int completed=progress.chapter;int previousHarvests=progress.harvests;
   if(success&&bossDefeated){progress.cores++;progress.bossKills++;}
@@ -62,7 +63,7 @@ public sealed partial class SliceModel {
   if(advance){progress.chapter++;if(completed==3){progress.water=Math.Max(0,progress.water-runWater);progress.medicine+=2;progress.food=Math.Max(0,progress.food-2);}if(completed==4){progress.seeds+=3;progress.cropFailed=true;}}
   if(productive)SettleShelter();
   if(success){progress.expeditions++;if(progress.expeditions%3==0)progress.raidPending=true;}
-  Home(success?"extract":"failed");if(advance)Emit("story-"+progress.chapter,x);if(previousHarvests==0&&progress.harvests>0)Emit("first-harvest",x);return true;
+  Home(success?"extract":"failed");if(bankedBlueprint)Emit("blueprint-banked",x);if(advance)Emit("story-"+progress.chapter,x);if(previousHarvests==0&&progress.harvests>0)Emit("first-harvest",x);return true;
  }
  public bool Upgrade(){
   int cost=12*progress.weapon;if(place!=Place.Shelter||progress.weapon>=6||progress.metal<cost)return false;
@@ -96,7 +97,7 @@ public sealed partial class SliceModel {
    if(!attackHit&&attackElapsed>=Windup){
     attackHit=true;x=Math.Max(Left,Math.Min(Right,x+face*(combo==0?.30f:.12f)));Emit("slash",x);
     foreach(var e in enemies)if(e.hp>0&&e.delay<=0&&Math.Abs(e.x-x)<(activeHero==3?3.4f:activeHero==2?7f:activeHero==1?2.7f:combo==0?1.9f:2.2f)&&(e.x-x)*face>-.3f&&Math.Abs(e.y-y)<1.4f){
-     lastDamage=Math.Max(1,(combo==2?2:1)+(progress.weapon-1)+(activeHero==1?1:0)-(e.brute&&activeHero!=1?1:0)+(counterAttack?2:0));e.hp-=lastDamage;e.hurt=e.boss?.06f:combo==2?.55f:.3f;if(!e.boss)e.attack=e.dash=0;e.cooldown=.35f;
+     lastDamage=Math.Max(1,(combo==2?2:1)+(WeaponPower(activeHero)-1)+(activeHero==1?1:0)-(e.brute&&activeHero!=1?1:0)+(counterAttack?2:0));e.hp-=lastDamage;e.hurt=e.boss?.06f:combo==2?.55f:.3f;if(!e.boss)e.attack=e.dash=0;e.cooldown=.35f;
      e.x=Math.Max(Left,Math.Min(Right,e.x+face*(activeHero==1?1.2f:combo==2?.8f:.32f)));if(combo==1&&!e.brute)e.vy=5;
      RegisterHit(e);Emit(e.hp<=0?"down":"hit",e.x);
     }
@@ -104,7 +105,7 @@ public sealed partial class SliceModel {
    if(attack<=0){attack=0;if(queued&&combo<2)BeginAttack(combo+1);else if(combo==2){comboGrace=0;attackLock=.16f;}else comboGrace=.32f;}
   }
   TickTag(dt);if(place!=Place.Shelter)UpdateEnemies(dt);
-  if(interact){
+  if(interact&&!TalkWitness()){
    if(place==Place.Shelter){
     if(shelterFloor>1){UseFacility();}
     else if(x>8){if(progress.raidPending)StartRaid();else Depart();}

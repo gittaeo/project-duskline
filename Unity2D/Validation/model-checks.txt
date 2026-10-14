@@ -1,4 +1,4 @@
-172 checks passed
+184 checks passed
 Starts in shelter
 Can depart
 World extended beyond 64 units
@@ -171,3 +171,15 @@ Later lore locked behind story progress
 Lore survives save roundtrip
 Unknown lore bits removed
 Fortress record unlocks with raincoat mission
+Blueprint required for signature forge
+Suhyeong hands over blueprint
+Failed return loses blueprint
+Safe return banks blueprint
+Forge charges exact resources
+Signature damage belongs to its owner
+Tag does not inherit another signature
+Signature has three ranks
+Field forging blocked
+Signature and blueprint save roundtrip
+Legacy saves initialize signature ranks
+Witness requires safe conversation distance

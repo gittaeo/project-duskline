@@ -89,6 +89,9 @@ public sealed partial class SliceGame {
    bool can=model.progress.weapon<6&&model.progress.metal>=12*model.progress.weapon&&(model.progress.weapon<3||model.progress.cores>0);
    if(MapButton(new Rect(110,554,480,49),model.progress.weapon>=6?"무기 최대 강화 LV6":"무기 LV"+model.progress.weapon+" → "+(model.progress.weapon+1)+" · 금속"+12*model.progress.weapon+(model.progress.weapon>=3?" 코어1":""),can))model.Upgrade();
    Label(new Rect(614,555,540,46),"금속 "+model.progress.metal+" / 보스 코어 "+model.progress.cores+" · 첫 강화용 금속12 지급",17,Cream);
+   string forge=model.SignatureRank>=3?"고유 무기 최대 각성":!model.SignatureUnlocked?"고유 무기: 4장 · LV4 · 이수형 설계도 필요":SliceModel.SignatureNames[model.activeHero]+" "+(model.SignatureRank==0?"제작":"각성 "+(model.SignatureRank+1))+" · 금속"+model.SignatureMetalCost+" 코어"+model.SignatureCoreCost;
+   if(MapButton(new Rect(110,608,710,32),forge,model.CanForgeSignature))model.ForgeSignature();
+   if(MapButton(new Rect(842,608,326,32),"제작 대상: "+model.HeroName+" →",true)){model.tagCooldown=0;model.Tag();}
   }else{
    if(MapButton(new Rect(110,488,410,48),"안전 귀환 · 물자 필요 / 주변 적 6m 이내 불가",model.place==Place.Expedition)){if(model.MapReturn())worldMap=false;}
    Label(new Rect(545,482,615,65),"귀환 불가 시 적과 거리를 벌린 뒤 다시 시도하세요.\n지역 간 재출정은 쉘터에서 선택합니다.",17,Cream);

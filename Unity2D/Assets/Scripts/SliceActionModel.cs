@@ -29,7 +29,8 @@ public sealed partial class SliceModel {
  void SpecialImpact(){
   if(activeHero==0||activeHero==3)x=Math.Max(Left,Math.Min(Right,x+face*(activeHero==3?2.3f:1.5f)));
   float range=ultimate?(activeHero==2?9:5):activeHero==3?4.5f:activeHero==2?8:3.8f;
-  int damage=ultimate?8+progress.weapon*2:activeHero==2?progress.weapon:4+progress.weapon;
+  range+=SignatureRank*.35f;
+  int damage=ultimate?8+WeaponPower(activeHero)*2:activeHero==2?WeaponPower(activeHero):4+WeaponPower(activeHero);
   Emit("skill-impact",x);
   foreach(var e in enemies)if(e.hp>0&&e.delay<=0&&Math.Abs(e.x-x)<range&&(activeHero==1||(e.x-x)*face>-.4f)&&Math.Abs(e.y-y)<2.2f){
    lastDamage=damage;e.hp-=damage;e.hurt=e.boss?.1f:activeHero==3?1.1f:.65f;if(!e.boss||ultimate)e.attack=e.dash=0;e.cooldown=.65f;

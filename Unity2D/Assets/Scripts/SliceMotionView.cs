@@ -63,6 +63,7 @@ public sealed partial class SliceGame {
    int id=chargeLayer?model.activeHero:flourishHero;float face=chargeLayer?model.face:flourishFace;
    Vector3 origin=chargeLayer?new Vector3(model.x,-1.5f+model.y,0):flourishOrigin;
    Color c=id==0?new Color(.75f,.88f,1):id==1?new Color(1,.48f,.12f):id==2?new Color(.4f,1,.74f):new Color(.12f,.8f,1);
+   c=Color.Lerp(c,WeaponTint(),.65f);
    if(flourishUltimate&&!chargeLayer)c=Color.Lerp(c,Amber,.35f);
    float fade=chargeLayer?.65f:Mathf.Pow(1-u,1.5f);c.a=fade*(layer>3?.42f:.8f);lr.startColor=c;lr.endColor=new Color(c.r,c.g,c.b,0);
    lr.widthMultiplier=(reducedImpact?.025f:layer==1?.14f:.055f)*(chargeLayer?1:1-u);

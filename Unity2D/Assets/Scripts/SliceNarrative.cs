@@ -122,8 +122,8 @@ public sealed partial class SliceGame {
    if(model.shelterFloor==1&&model.progress.chapter>=2&&model.activeHero!=1)WorldLabel(new Vector3(-7.2f,.2f,0),"도윤 · 금속 의수",Cream);
    if((model.shelterFloor==(model.progress.floors>=2?2:1))&&model.progress.chapter>=3&&model.activeHero!=2)WorldLabel(new Vector3(5.2f,.2f,0),"하린 · 의료가방",Cream);
   }
-  Label(new Rect(965,99,295,25),(model.activeHero==0?WeaponNames[model.progress.weapon-1]:model.activeHero==1?"분쇄 의수 LV "+model.progress.weapon:model.activeHero==3?"전격 창 LV "+model.progress.weapon:"전술 권총 LV "+model.progress.weapon)+"   [TAB 지도]",14,model.progress.weapon>=3?Amber:Cream);
-  if(upgradeTimer>0){Box(new Rect(385,260,510,108),Panel);Label(new Rect(412,280,470,38),"공용 무기 강화 · LV "+model.progress.weapon,24,Amber);Label(new Rect(412,324,470,28),"동료 전체 피해량 상승 · 검날과 공격 광휘 변화",17,Cream);}
+  Label(new Rect(965,99,295,25),(model.SignatureRank>0?SliceModel.SignatureNames[model.activeHero]+" ★"+model.SignatureRank:model.activeHero==0?WeaponNames[model.progress.weapon-1]:model.activeHero==1?"분쇄 의수 LV "+model.progress.weapon:model.activeHero==3?"전격 창 LV "+model.progress.weapon:"전술 권총 LV "+model.progress.weapon)+"   [TAB 지도]",14,model.progress.weapon>=3?Amber:Cream);
+  if(upgradeTimer>0){Box(new Rect(385,260,510,108),Panel);Label(new Rect(412,280,470,38),model.SignatureRank>0?SliceModel.SignatureNames[model.activeHero]+" · 각성 "+model.SignatureRank:"공용 무기 강화 · LV "+model.progress.weapon,24,Amber);Label(new Rect(412,324,470,28),model.SignatureRank>0?"개인 무기 피해·스킬 사거리 상승 · 공명 광휘":"동료 전체 피해량 상승 · 검날과 공격 광휘 변화",17,Cream);}
   if(journal||StoryOpen){
    Box(new Rect(0,0,1280,720),new Color(0,0,0,.8f));Box(new Rect(210,157,860,405),Panel);
    Label(new Rect(247,190,787,43),StoryOpen?storyTitle:"제7대피소 · 수색 기록",27,Amber);

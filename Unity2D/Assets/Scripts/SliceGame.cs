@@ -11,13 +11,13 @@ public sealed partial class SliceGame:MonoBehaviour {
  AudioSource sound;AudioClip hitClip,lootClip,swingClip,alarmClip;
  LineRenderer slash;float slashLife,shake,hitSlow,messageUntil,ghostClock,pulseClock,screenDamage;
  string message="쉘터에서 출발해 보급품을 회수하세요",capturePath,savePath;
- bool paused,automated;float captureClock;int captureStage;Place shown=(Place)(-1);
+ bool paused,automated,awakenedCapture;float captureClock;int captureStage;Place shown=(Place)(-1);
  sealed class Glint {public Transform t;public Vector3 velocity;public float life;public SpriteRenderer sprite;}
  static readonly Color Cream=new Color(.90f,.85f,.71f),Amber=new Color(1,.67f,.24f),Panel=new Color(.035f,.055f,.07f,.94f);
  void Start(){
   Application.targetFrameRate=60;QualitySettings.vSyncCount=0;font=Resources.Load<Font>("DuskFont");pixel=Texture2D.whiteTexture;
   square=Sprite.Create(pixel,new Rect(0,0,1,1),new Vector2(.5f,.5f),1);
-  string[] args=Environment.GetCommandLineArgs();for(int i=0;i<args.Length-1;i++)if(args[i]=="--capture"){capturePath=args[i+1];automated=true;}
+  string[] args=Environment.GetCommandLineArgs();awakenedCapture=Array.IndexOf(args,"--awakened")>=0;for(int i=0;i<args.Length-1;i++)if(args[i]=="--capture"){capturePath=args[i+1];automated=true;}
   savePath=Path.GetFullPath(Path.Combine(Application.dataPath,"..","Save","progress-v10.json"));
   model=new SliceModel(automated?null:LoadProgress());model.GrantStarterKit();model.Signal+=OnSignal;model.Save+=SaveProgress;
   cam=new GameObject("Side camera").AddComponent<Camera>();cam.orthographic=true;cam.orthographicSize=3.75f;cam.transform.position=new Vector3(0,-.25f,-10);cam.clearFlags=CameraClearFlags.SolidColor;cam.backgroundColor=new Color(.02f,.025f,.04f);cam.gameObject.AddComponent<AudioListener>();
@@ -34,7 +34,7 @@ public sealed partial class SliceGame:MonoBehaviour {
   gate=new GameObject("Shelter barricade");gateArt=Make("Timber barricade",props[2],new Vector3(-5.8f,-2.6f,0),7);gateArt.transform.parent=gate.transform;
   var atlas=Resources.Load<Texture2D>("Actors");frames=new Sprite[8];
   for(int row=0;row<2;row++)for(int col=0;col<4;col++){int left=col*384,width=384;float anchor=170;if(col==3){left=1115;width=421;anchor=185;}frames[row*4+col]=Sprite.Create(atlas,new Rect(left,row==0?512:0,width,512),new Vector2(anchor/width,row==0?7f/512:64f/512),190);}
-  SetupStoryArt();SetupTagArt();SetupShelterArt();SetupActionFX();SetupWorldArt();SetupCoop();SetupMotionV09();
+  SetupStoryArt();SetupTagArt();SetupShelterArt();SetupActionFX();SetupWorldArt();SetupCoop();SetupMotionV09();SetupSignatureArt();
   hero=Make("Kang Ihyeon",motion[0],Vector3.zero,10);
   for(int i=0;i<15;i++)foes.Add(Make("Infected "+i,frames[4],Vector3.zero,9));
   for(int i=0;i<7;i++){crates.Add(Make("Supply "+i,props[0],Vector3.zero,8));lids.Add(Make("Lid placeholder "+i,props[1],Vector3.zero,9));}
@@ -43,7 +43,7 @@ public sealed partial class SliceGame:MonoBehaviour {
   messageUntil=Time.unscaledTime+7;SaveProgress();Render(0);if(!automated&&!model.progress.prologueSeen)ShowStory(0);else if(!automated&&model.progress.chapter==3&&!model.progress.rescueBriefed){model.progress.rescueBriefed=true;ShowScene("2장 · 문 앞의 두 사람",new[]{"석주가 다친 어머니를 부축하고 문 앞에 섰다.\n하린은 상처를 확인하고, 필요한 항생제가 없다고 말했다.\n이현은 형을 찾는 출정을 미룬다. 교역 은닉처(69m)에서 약을 구해야 한다."});SaveProgress();}
  }
  Progress LoadProgress(){
-  foreach(string path in new[]{savePath,savePath+".bak","D:/Unity/Duskline2D-Motion-v09/Save/progress-v9.json","D:/Unity/Duskline2D-Tag-v08/Save/progress-v8.json","D:/Unity/Duskline2D-World-v07/Save/progress-v7.json","D:/Unity/Duskline2D-Action-v06/Save/progress-v6.json","D:/Unity/Duskline2D-Shelter-v05/Save/progress-v5.json","D:/Unity/Duskline2D-Tag-v04/Save/progress-v4.json","D:/Unity/Duskline2D-Story-v03/Save/progress-v3.json","D:/Unity/Duskline2D-Combat-v02/Save/progress-v2.json"})if(File.Exists(path))try{var data=JsonUtility.FromJson<Progress>(File.ReadAllText(path));if(data!=null){data.Validate();return data;}}catch(Exception e){Debug.LogWarning("Save recovery: "+e.Message);}
+  foreach(string path in new[]{savePath,savePath+".bak","D:/Unity/Duskline2D-Lore-v11/Save/progress-v10.json","D:/Unity/Duskline2D-Expansion-v10/Save/progress-v10.json","D:/Unity/Duskline2D-Motion-v09/Save/progress-v9.json","D:/Unity/Duskline2D-Tag-v08/Save/progress-v8.json","D:/Unity/Duskline2D-World-v07/Save/progress-v7.json","D:/Unity/Duskline2D-Action-v06/Save/progress-v6.json","D:/Unity/Duskline2D-Shelter-v05/Save/progress-v5.json","D:/Unity/Duskline2D-Tag-v04/Save/progress-v4.json","D:/Unity/Duskline2D-Story-v03/Save/progress-v3.json","D:/Unity/Duskline2D-Combat-v02/Save/progress-v2.json"})if(File.Exists(path))try{var data=JsonUtility.FromJson<Progress>(File.ReadAllText(path));if(data!=null){data.Validate();return data;}}catch(Exception e){Debug.LogWarning("Save recovery: "+e.Message);}
   return new Progress();
  }
  void SaveProgress(){
@@ -53,7 +53,7 @@ public sealed partial class SliceGame:MonoBehaviour {
  }
  void Toast(string value){message=value;messageUntil=Time.unscaledTime+4;}
  void OnSignal(string value){
-  StorySignal(value);TagSignal(value);ShelterSignal(value);ActionSignal(value);WorldSignal(value);CoopSignal(value);MotionSignal(value);ChapterFourSignal(value);
+  StorySignal(value);TagSignal(value);ShelterSignal(value);ActionSignal(value);WorldSignal(value);CoopSignal(value);MotionSignal(value);ChapterFourSignal(value);SignatureSignal(value);
   switch(value){
    case "depart":Toast("골목 → 정비소 → 진료소 → 폐철도 · 양 끝에서 귀환");break;
    case "loot":Burst(new Vector3(model.lastEventX,-2,0),Amber,30);sound.PlayOneShot(lootClip,.2f);Toast("보급품 확보  ·  수색 금속 "+model.carried);break;
@@ -79,7 +79,7 @@ public sealed partial class SliceGame:MonoBehaviour {
  }
  void ShowSlash(){
   slashLife=.18f;slash.enabled=true;
-  Color c=model.activeHero==1?new Color(1,.48f,.12f):model.activeHero==2?new Color(.35f,1,.85f):model.progress.weapon>=3?Amber:model.progress.weapon==2?new Color(.5f,.85f,1):Cream;if(model.progress.weapon==3)c=Color.Lerp(c,Amber,.6f);slash.startColor=slash.endColor=c;
+  Color c=model.activeHero==1?new Color(1,.48f,.12f):model.activeHero==2?new Color(.35f,1,.85f):model.progress.weapon>=3?Amber:model.progress.weapon==2?new Color(.5f,.85f,1):Cream;if(model.progress.weapon==3)c=Color.Lerp(c,Amber,.6f);c=WeaponTint();slash.startColor=slash.endColor=c;
   for(int i=0;i<18;i++){float t=i/17f;Vector3 p;
    if(model.activeHero==3)p=new Vector3(.4f+t*3.2f,1.1f+Mathf.Sin(t*50)*.06f,0);
    else if(model.activeHero==2)p=new Vector3(.95f+t*6.2f,1.55f,0);
@@ -112,7 +112,7 @@ public sealed partial class SliceGame:MonoBehaviour {
   if(shown!=model.place){shown=model.place;cam.transform.position=new Vector3(indoors?0:model.place==Place.Raid?0:-1.5f,-.25f,-10);slash.enabled=false;slashLife=0;foreach(var p in glints)Destroy(p.t.gameObject);glints.Clear();}
 
   hero.flipX=model.face<0;hero.transform.position=new Vector3(model.x,-2.6f+model.y,0);
-  hero.transform.localScale=Vector3.one;RenderStoryArt();RenderTagArt();RenderShelter();RenderWalkV09();RenderActionFX();RenderSkillMotion();RenderWorldWeather();RenderCoop();MatchActorScale();
+  hero.transform.localScale=Vector3.one;RenderStoryArt();RenderTagArt();RenderShelter();RenderWalkV09();RenderActionFX();RenderSkillMotion();RenderWorldWeather();RenderCoop();MatchActorScale();RenderWeaponRadiance();
   hero.color=model.invulnerable>0&&Mathf.Sin(model.time*45)>0?new Color(1,.65f,.6f,.7f):Color.white;
   for(int i=0;i<foes.Count;i++){
    var sr=foes[i];bool active=i<model.enemies.Count&&model.enemies[i].hp>0&&model.enemies[i].delay<=0&&!indoors;sr.enabled=active;if(!active)continue;
@@ -141,8 +141,14 @@ public sealed partial class SliceGame:MonoBehaviour {
  void Automation(float dt){
   captureClock+=dt;if(captureClock<.5f)return;
   int id=(int)((captureClock-.5f)/6.5f);float phase=(captureClock-.5f)%6.5f;
-  if(id>=4){int seen=0;foreach(bool value in seenWalk)if(value)seen++;File.WriteAllText(capturePath+"-run.txt","Walk frames "+seen+"/32\nSkill captures "+skillShots+"/4\nAttack captures "+attackShots+"/12");Application.Quit();return;}
-  if(id!=motionHero){motionHero=id;motionSkill=motionCaptured=false;if(model.place==Place.Shelter){model.progress.chapter=3;model.Depart();}model.enemies.Clear();model.x=18;model.y=model.vy=0;model.activeHero=id;model.skillTimer=0;model.skillCooldowns[id]=0;model.stamina=100;cam.transform.position=new Vector3(18,-.25f,-10);shown=Place.Expedition;}
+  if(id>=5){int seen=0;foreach(bool value in seenWalk)if(value)seen++;File.WriteAllText(capturePath+"-run.txt","Walk frames "+seen+"/32\nSkill captures "+skillShots+"/4\nAttack captures "+attackShots+"/12");Application.Quit();return;}
+  if(id==4){
+   model.progress.chapter=6;model.attack=model.skillTimer=model.velocityX=0;model.queued=false;
+   if(phase<2){model.place=Place.Expedition;model.x=55.5f;cam.transform.position=new Vector3(57,-.25f,-10);if(captureStage==0&&phase>.8f){ScreenCapture.CaptureScreenshot(capturePath+"-suhyeong.png");captureStage=1;}}
+   else {model.place=Place.Shelter;model.shelterFloor=1;model.x=0;if(captureStage==1&&phase>3){ScreenCapture.CaptureScreenshot(capturePath+"-taeo.png");captureStage=2;}}
+   return;
+  }
+  if(id!=motionHero){if(awakenedCapture){model.progress.weapon=6;model.progress.resonanceBlueprint=true;for(int n=0;n<4;n++)model.progress.signatureRanks[n]=3;}motionHero=id;motionSkill=motionCaptured=false;if(model.place==Place.Shelter){model.progress.chapter=3;model.Depart();}model.enemies.Clear();model.x=18;model.y=model.vy=0;model.activeHero=id;model.skillTimer=0;model.skillCooldowns[id]=0;model.stamina=100;cam.transform.position=new Vector3(18,-.25f,-10);shown=Place.Expedition;}
   model.Tick(dt,phase<2.2f?1:0,false,phase>4.2f&&phase<5.9f,false,false);
   if(phase>4.2f&&model.attackHit&&!seenAttack[id,model.combo]){seenAttack[id,model.combo]=true;attackShots++;ScreenCapture.CaptureScreenshot(capturePath+"-attack-"+id+"-"+model.combo+".png");}
   if(phase<2.2f){int frame=WalkFrame();if(!seenWalk[id,frame]){seenWalk[id,frame]=true;if(frame==3||frame==6)ScreenCapture.CaptureScreenshot(capturePath+"-walk-"+id+"-"+frame+".png");}}
@@ -177,7 +183,7 @@ public sealed partial class SliceGame:MonoBehaviour {
    }else WorldLabel(new Vector3(-5.8f,-1.4f,0),"방어문  "+model.progress.gate,Amber);
   }
   if(screenDamage>0)Box(new Rect(0,0,1280,720),new Color(.65f,0,0,screenDamage*.32f));
-  DrawTagHUD();DrawShelterHUD();DrawActionHUD();DrawNarrative();DrawWorldHUD();
+  DrawSignatureNPCs();DrawTagHUD();DrawShelterHUD();DrawActionHUD();DrawNarrative();DrawWorldHUD();
   if(paused){Box(new Rect(0,0,1280,720),new Color(0,0,0,.7f));Box(new Rect(370,236,540,230),Panel);Label(new Rect(402,264,475,40),"일시 정지",30,Cream);Label(new Rect(402,321,475,70),"J키를 연이어 눌러 3단 공격\n좀비의 붉은 예고를 보고 SHIFT로 회피",19,Amber);Label(new Rect(402,411,475,28),"ESC로 계속 · 마우스 클릭은 공격하지 않습니다",16,Cream);}
  }
  void WorldLabel(Vector3 pos,string text,Color color){var p=cam.WorldToViewportPoint(pos);if(p.x<.05f||p.x>.95f)return;float x=p.x*1280,y=(1-p.y)*720;Box(new Rect(x-110,y-16,220,30),Panel);Label(new Rect(x-101,y-13,206,28),text,14,color);}
