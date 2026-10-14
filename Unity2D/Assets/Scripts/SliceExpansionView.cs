@@ -3,15 +3,25 @@ namespace Duskline.Slice {
 public sealed partial class SliceGame {
  // Calibrate authored body size, not the bounding box of a bent pose or extended weapon.
  float PoseScale(int id,Sprite sprite){
+  if(sprite!=null&&walkScales.TryGetValue(sprite,out float gaitScale))return gaitScale;
   if(id==0){foreach(var frame in combat)if(sprite==frame)return .88f;}
   if(id==1||id==2){foreach(var frame in skillFrames)if(sprite==frame)return id==1?.88f:.90f;}
   return 1;
  }
  void MatchActorScale(){
   hero.transform.localScale*=PoseScale(model.activeHero,hero.sprite);
+  // Blade points were authored before final pose/scale selection. Follow the final transform.
+  if(bladeEdge.enabled){
+   if(model.skillTimer>0||model.coopTimer>0)bladeEdge.enabled=false;
+   else for(int i=0;i<2;i++){
+    Vector3 local=bladeEdge.GetPosition(i)-hero.transform.position;
+    bladeEdge.SetPosition(i,hero.transform.position+hero.transform.rotation*Vector3.Scale(local,hero.transform.localScale));
+   }
+  }
   if(coopPartner.enabled)coopPartner.transform.localScale=Vector3.one*PoseScale(model.coopOutgoing,coopPartner.sprite);
  }
  void ChapterFourSignal(string value){
+  if(value=="lore")Toast("지역 기록 발견 · 귀환 후 I 기록에서 확인");
   if(value=="story-7")ShowScene("4-1 · 난간 위의 거래",new[]{
    "노란 후드의 재희는 방에 들어오지 않고 계단부터 살폈다.\n그가 남긴 교역로 표식은 실제 귀환로와 맞아떨어졌다.\n하지만 표식 뒷면에는 성채 운송 구역의 배급 번호가 찍혀 있었다.",
    "이현은 거래상의 짐에서 빛바랜 주황 천을 보았다.\n형이 마지막으로 입었던 우의와 같은 방수 안감이었다.\n폐철도 끝 보관함(86m)을 회수하고 집행자를 쓰러뜨려 단서를 가져오자."});

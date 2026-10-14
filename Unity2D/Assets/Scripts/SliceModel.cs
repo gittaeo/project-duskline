@@ -4,7 +4,7 @@ namespace Duskline.Slice {
 public enum Place { Shelter, Expedition, Raid }
 [Serializable] public sealed partial class Progress {
  public int version=10,chapter,water,bandages,boards,metal,expeditions,weapon=1,gate=100;public bool raidPending,prologueSeen;
- public void Validate(){version=10;chapter=Math.Max(0,Math.Min(8,chapter));water=Math.Max(0,water);bandages=Math.Max(0,bandages);boards=Math.Max(0,boards);metal=Math.Max(0,Math.Min(99999,metal));expeditions=Math.Max(0,expeditions);weapon=Math.Max(1,Math.Min(6,weapon));gate=Math.Max(0,Math.Min(100,gate));ValidateExpansion();sorties=Math.Max(0,sorties);cores=Math.Max(0,cores);bossKills=Math.Max(0,bossKills);}
+ public void Validate(){version=10;chapter=Math.Max(0,Math.Min(8,chapter));water=Math.Max(0,water);bandages=Math.Max(0,bandages);boards=Math.Max(0,boards);metal=Math.Max(0,Math.Min(99999,metal));expeditions=Math.Max(0,expeditions);weapon=Math.Max(1,Math.Min(6,weapon));gate=Math.Max(0,Math.Min(100,gate));loreMask&=127;ValidateExpansion();sorties=Math.Max(0,sorties);cores=Math.Max(0,cores);bossKills=Math.Max(0,bossKills);}
 }
 public sealed partial class SliceModel {
  public sealed class Enemy { public float x,y,vy,attack,hurt,cooldown,memory,delay,dash,direction=-1;public int hp=4,maxHp=4;public bool runner,brute,boss,spitter,enraged,gateTarget,hit; }
@@ -31,7 +31,7 @@ public sealed partial class SliceModel {
  void ResetCombat(){coopTimer=coopElapsed=0;coopPulse=0;tagBuffer=0;acids.Clear();ResetAction();y=vy=attack=attackElapsed=comboGrace=roll=rollCooldown=attackLock=0;queued=attackHit=crouching=false;velocityX=landing=0;combo=0;invulnerable=.5f;}
  public bool Depart(){
   if(place!=Place.Shelter||progress.raidPending)return false;
-  place=Place.Expedition;shelterFloor=1;x=-5.4f;face=1;carried=missionMask=runWater=runBandages=runBoards=runFood=0;rescued=false;runKills=0;ResetCombat();enemies.Clear();supplies.Clear();
+  place=Place.Expedition;shelterFloor=1;x=-5.4f;face=1;runLoreMask=0;carried=missionMask=runWater=runBandages=runBoards=runFood=0;rescued=false;runKills=0;ResetCombat();enemies.Clear();supplies.Clear();
   float[] positions={3.8f,9,15,22,26,33,39,44,49,54,63,70,78,86};
   for(int i=0;i<positions.Length;i++)enemies.Add(new Enemy{x=positions[i],runner=i%3==2&&i<10,brute=i>=10&&i%2==0,hp=i>=10&&i%2==0?14:i%3==2?5:4});
   float[] locations={.2f,16,31,47,55,69,86};int[] amounts={10,12,14,18,24,30,36};
@@ -52,6 +52,7 @@ public sealed partial class SliceModel {
  }
  public bool ReturnHome(bool success){
   if(place!=Place.Expedition)return false;
+  if(success)progress.loreMask|=runLoreMask;runLoreMask=0;
   bool advance=success&&MissionReady;bool productive=success&&carried>0;int completed=progress.chapter;int previousHarvests=progress.harvests;
   if(success&&bossDefeated){progress.cores++;progress.bossKills++;}
   if(success&&runKills>=6){carried+=8;Emit("bounty",x);}
@@ -111,7 +112,7 @@ public sealed partial class SliceModel {
     else if(x>4.5f&&x<7){if(!Repair())Emit("repair-unavailable",x);}
     else if(Math.Abs(x)<2){hp=100;Emit("rest",x);}
    }else if(place==Place.Expedition){
-    foreach(var s in supplies)if(!s.opened&&Math.Abs(s.x-x)<1.25f){s.opened=true;carried+=s.amount;int index=supplies.IndexOf(s);missionMask|=1<<index;if(index==0)runWater+=2;if(index==1)runBandages+=2;if(index==2)runBoards+=4;if(index==4||index==6)runFood+=4;Emit("loot",s.x);break;}
+    foreach(var s in supplies)if(!s.opened&&Math.Abs(s.x-x)<1.25f){s.opened=true;carried+=s.amount;int index=supplies.IndexOf(s);missionMask|=1<<index;CollectLore(index);if(index==0)runWater+=2;if(index==1)runBandages+=2;if(index==2)runBoards+=4;if(index==4||index==6)runFood+=4;Emit("loot",s.x);break;}
     if(progress.chapter==1&&Math.Abs(x-32)<1.5f&&!rescued){if((missionMask&2)!=0){rescued=true;Emit("doyun-rescue",x);}else Emit("need-parts",x);}
     if(progress.chapter==2&&Math.Abs(x-48)<1.5f&&!rescued){if((missionMask&4)!=0){rescued=true;Emit("harin-rescue",x);}else Emit("need-tools",x);}
     if(progress.chapter==4&&Math.Abs(x-86)<1.5f&&!rescued){if((missionMask&64)!=0){rescued=true;Emit("mijeong-rescue",x);}else Emit("need-seeds",x);}

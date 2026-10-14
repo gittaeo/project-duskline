@@ -94,6 +94,10 @@ public sealed partial class SliceGame {
   }
   if(Input.GetKeyDown(KeyCode.Tab)){worldMap=!worldMap;journal=false;}
   if(Input.GetKeyDown(KeyCode.I)){journal=!journal;worldMap=false;}
+  if(journal){
+   if(Input.GetKeyDown(KeyCode.RightArrow)||Input.GetKeyDown(KeyCode.D))lorePage=(lorePage+1)%8;
+   if(Input.GetKeyDown(KeyCode.LeftArrow)||Input.GetKeyDown(KeyCode.A))lorePage=(lorePage+7)%8;
+  }
   if(worldMap){MapKeyboard();return worldMap;}return journal;
  }
  string Objective(){
@@ -124,8 +128,9 @@ public sealed partial class SliceGame {
    Box(new Rect(0,0,1280,720),new Color(0,0,0,.8f));Box(new Rect(210,157,860,405),Panel);
    Label(new Rect(247,190,787,43),StoryOpen?storyTitle:"제7대피소 · 수색 기록",27,Amber);
    string body=StoryOpen?storyPages[storyPage]:"강이현, 28세. 붉은 목도리는 형 강준이 남긴 담요 조각이다.\n\n현재: "+model.MissionTitle+"\n"+Objective()+"\n\n주민: "+(model.progress.chapter>=2?"도윤":"이현")+(model.progress.chapter>=3?", 하린":"")+(model.progress.chapter>=4?", 석주":"")+(model.progress.chapter>=5?", 미정":"")+"\n비축: 물 "+model.progress.water+" / 붕대 "+model.progress.bandages+" / 판재 "+model.progress.boards;
+   if(!StoryOpen&&lorePage>0)body=LoreJournal();
    var style=Style(21,Cream);style.wordWrap=true;GUI.Label(new Rect(247,251,785,240),body,style);
-   Label(new Rect(247,510,780,27),StoryOpen?"ENTER / E  다음  ·  "+(storyPage+1)+" / "+storyPages.Length:"I 기록 닫기 · TAB 지역 지도",17,Cream);
+   Label(new Rect(247,510,780,27),StoryOpen?"ENTER / E  다음  ·  "+(storyPage+1)+" / "+storyPages.Length:"← / → 기록 넘기기 · "+(lorePage+1)+" / 8 · I 닫기 · TAB 지도",17,Cream);
   }
  }
 }

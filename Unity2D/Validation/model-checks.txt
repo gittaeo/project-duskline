@@ -1,4 +1,4 @@
-164 checks passed
+172 checks passed
 Starts in shelter
 Can depart
 World extended beyond 64 units
@@ -163,3 +163,11 @@ Raincoat and boss complete mission
 Chapter four front half completes on return
 Expanded story survives save validation
 Repeat return cannot exceed story cap
+Lore remains unbanked during expedition
+Failed expedition loses unbanked lore
+Successful extraction banks lore
+Collected lore cannot duplicate
+Later lore locked behind story progress
+Lore survives save roundtrip
+Unknown lore bits removed
+Fortress record unlocks with raincoat mission

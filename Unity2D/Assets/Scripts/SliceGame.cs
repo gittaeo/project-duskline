@@ -137,13 +137,14 @@ public sealed partial class SliceGame:MonoBehaviour {
   ActionEffects(dt);MotionEffects(dt);ghostClock-=dt;if((model.roll>0||model.attack>0||model.skillTimer>0)&&hero.enabled&&ghostClock<=0){ghostClock=.04f;var r=Make("Motion echo",hero.sprite,hero.transform.position,8);r.flipX=hero.flipX;r.transform.localScale=hero.transform.localScale;r.transform.rotation=hero.transform.rotation;r.color=new Color(.65f,.82f,1,.22f);glints.Add(new Glint{t=r.transform,sprite=r,life=.14f});}
   for(int i=glints.Count-1;i>=0;i--){var p=glints[i];p.life-=dt;p.t.position+=p.velocity*dt;p.velocity+=Vector3.down*dt*.2f;var c=p.sprite.color;c.a=Mathf.Min(c.a,p.life*2);p.sprite.color=c;if(p.life<=0){Destroy(p.t.gameObject);glints.RemoveAt(i);}}
  }
- readonly bool[,] seenWalk=new bool[4,8];int motionHero=-1,skillShots;bool motionSkill,motionCaptured;
+ readonly bool[,] seenWalk=new bool[4,8];int motionHero=-1,skillShots,attackShots;readonly bool[,] seenAttack=new bool[4,3];bool motionSkill,motionCaptured;
  void Automation(float dt){
   captureClock+=dt;if(captureClock<.5f)return;
-  int id=(int)((captureClock-.5f)/4.2f);float phase=(captureClock-.5f)%4.2f;
-  if(id>=4){int seen=0;foreach(bool value in seenWalk)if(value)seen++;File.WriteAllText(capturePath+"-run.txt","Walk frames "+seen+"/32\nSkill captures "+skillShots+"/4");Application.Quit();return;}
+  int id=(int)((captureClock-.5f)/6.5f);float phase=(captureClock-.5f)%6.5f;
+  if(id>=4){int seen=0;foreach(bool value in seenWalk)if(value)seen++;File.WriteAllText(capturePath+"-run.txt","Walk frames "+seen+"/32\nSkill captures "+skillShots+"/4\nAttack captures "+attackShots+"/12");Application.Quit();return;}
   if(id!=motionHero){motionHero=id;motionSkill=motionCaptured=false;if(model.place==Place.Shelter){model.progress.chapter=3;model.Depart();}model.enemies.Clear();model.x=18;model.y=model.vy=0;model.activeHero=id;model.skillTimer=0;model.skillCooldowns[id]=0;model.stamina=100;cam.transform.position=new Vector3(18,-.25f,-10);shown=Place.Expedition;}
-  model.Tick(dt,phase<2.2f?1:0,false,false,false,false);
+  model.Tick(dt,phase<2.2f?1:0,false,phase>4.2f&&phase<5.9f,false,false);
+  if(phase>4.2f&&model.attackHit&&!seenAttack[id,model.combo]){seenAttack[id,model.combo]=true;attackShots++;ScreenCapture.CaptureScreenshot(capturePath+"-attack-"+id+"-"+model.combo+".png");}
   if(phase<2.2f){int frame=WalkFrame();if(!seenWalk[id,frame]){seenWalk[id,frame]=true;if(frame==3||frame==6)ScreenCapture.CaptureScreenshot(capturePath+"-walk-"+id+"-"+frame+".png");}}
   if(phase>=2.3f&&!motionSkill){model.Skill();motionSkill=true;}
   if(motionSkill&&!motionCaptured&&model.skillElapsed>(id==1?.42f:.22f)){ScreenCapture.CaptureScreenshot(capturePath+"-skill-"+id+".png");motionCaptured=true;skillShots++;}

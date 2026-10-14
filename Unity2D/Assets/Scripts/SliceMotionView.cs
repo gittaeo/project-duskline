@@ -2,12 +2,21 @@ using UnityEngine;
 namespace Duskline.Slice {
 public sealed partial class SliceGame {
  Sprite[][] walkEight;readonly LineRenderer[] flourish=new LineRenderer[6];
+ readonly System.Collections.Generic.Dictionary<Sprite,float> walkScales=new System.Collections.Generic.Dictionary<Sprite,float>();
  float flourishLife,flourishDuration;int flourishHero;float flourishFace;bool flourishUltimate;Vector3 flourishOrigin;
  void SetupMotionV09(){
   walkEight=new Sprite[4][];string[] names={"IhyeonWalk8","DoyunWalk8","HarinWalk8","SerinWalk8"};
   for(int id=0;id<4;id++){
    var t=Resources.Load<Texture2D>(names[id]);walkEight[id]=new Sprite[8];
-   for(int i=0;i<8;i++)walkEight[id][i]=GridFrame(t,4,2,i,t.height*new[]{.40f,.46f,.46f,.43f}[id]/2.05f,.5f);
+   for(int i=0;i<8;i++){
+    var frame=GridFrame(t,4,2,i,t.height*new[]{.40f,.46f,.46f,.43f}[id]/2.05f,.5f);walkEight[id][i]=frame;
+    // Ignore transparent padding; retain a small amount of natural gait compression.
+    int top=0;var pixels=t.GetPixels32();var rect=frame.rect;
+    for(int y=0;y<(int)rect.height;y++)for(int x=0;x<(int)rect.width;x++)
+     if(pixels[((int)rect.y+y)*t.width+(int)rect.x+x].a>180)top=Mathf.Max(top,y);
+    float height=(top-frame.pivot.y+1)/frame.pixelsPerUnit;
+    walkScales[frame]=Mathf.Clamp(2.05f/height,.85f,1.15f);
+   }
   }
   for(int i=0;i<6;i++){
    var lr=new GameObject("Skill flourish "+i).AddComponent<LineRenderer>();lr.material=new Material(Shader.Find("Sprites/Default"));lr.positionCount=40;lr.sortingOrder=17+i;lr.useWorldSpace=true;
