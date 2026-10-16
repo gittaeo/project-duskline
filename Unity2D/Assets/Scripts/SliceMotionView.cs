@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 namespace Duskline.Slice {
 public sealed partial class SliceGame {
  Sprite[][] walkEight;readonly LineRenderer[] flourish=new LineRenderer[6];
@@ -15,7 +15,7 @@ public sealed partial class SliceGame {
     for(int y=0;y<(int)rect.height;y++)for(int x=0;x<(int)rect.width;x++)
      if(pixels[((int)rect.y+y)*t.width+(int)rect.x+x].a>180)top=Mathf.Max(top,y);
     float height=(top-frame.pivot.y+1)/frame.pixelsPerUnit;
-    walkScales[frame]=Mathf.Clamp(2.05f/height,.85f,1.15f);
+    walkScales[frame]=new[]{.975f,1.02f,1f,.99f}[id];
    }
   }
   for(int i=0;i<6;i++){
@@ -37,8 +37,14 @@ public sealed partial class SliceGame {
  }
  void RenderSkillMotion(){
   if(model.skillTimer<=0)return;
-  float windup=model.ultimate?.28f:model.activeHero==1?.36f:.12f;
+  float windup=model.ultimate?.28f:model.AdvancedGunner&&model.progress.harinCareer==2?.36f:model.activeHero==1?.36f:.12f;
   float t=model.skillElapsed,after=t-windup;
+  if(model.AdvancedGunner){
+   hero.sprite=model.progress.harinCareer==2?tagFrames[7]:tagFrames[6];hero.enabled=true;
+   float kick=after>=0?Mathf.Max(0,1-(model.progress.harinCareer==2?after:after%.11f)/.10f):0;
+   hero.transform.position+=new Vector3(-model.face*kick*(model.progress.harinCareer==2?.20f:.055f),0,0);
+   hero.transform.rotation=Quaternion.Euler(0,0,model.face*kick*(model.progress.harinCareer==2?7:2));return;
+  }
   Sprite ready=model.activeHero==3?serinFrames[3]:model.activeHero==0?motion[5]:tagFrames[(model.activeHero-1)*4+3];
   if(t<windup*.35f){hero.sprite=ready;hero.enabled=true;scoutWindup.enabled=false;}
   if(after>=0){
@@ -61,7 +67,7 @@ public sealed partial class SliceGame {
    lr.enabled=chargeLayer||flourishLife>0;if(!lr.enabled)continue;
    float u=chargeLayer?Mathf.Clamp01(model.skillElapsed/(model.ultimate?.28f:model.activeHero==1?.36f:.12f)):1-flourishLife/flourishDuration;
    int id=chargeLayer?model.activeHero:flourishHero;float face=chargeLayer?model.face:flourishFace;
-   Vector3 origin=chargeLayer?new Vector3(model.x,-1.5f+model.y,0):flourishOrigin;
+   Vector3 origin=chargeLayer?new Vector3(model.x,-1.5f+model.y,0):flourishOrigin;if(!chargeLayer&&id==2&&model.activeHero==2)origin=EquippedMuzzle();
    Color c=id==0?new Color(.75f,.88f,1):id==1?new Color(1,.48f,.12f):id==2?new Color(.4f,1,.74f):new Color(.12f,.8f,1);
    c=Color.Lerp(c,WeaponTint(),.65f);
    if(flourishUltimate&&!chargeLayer)c=Color.Lerp(c,Amber,.35f);
@@ -72,7 +78,7 @@ public sealed partial class SliceGame {
     if(chargeLayer){float a=p*Mathf.PI*2;float radius=1.15f-u*.55f;v=new Vector3(Mathf.Cos(a)*radius,Mathf.Sin(a)*radius*.5f-.25f,0);}
     else if(id==0){float a=Mathf.Lerp(-120,115,p)*Mathf.Deg2Rad+u*.7f;float radius=1.3f+u*2.5f+layer*.13f;v=new Vector3(face*Mathf.Cos(a)*radius,Mathf.Sin(a)*radius*.6f,0);}
     else if(id==1){float a=p*Mathf.PI*2;float radius=.4f+u*4+layer*.22f;v=new Vector3(Mathf.Cos(a)*radius,-.93f+Mathf.Sin(a)*radius*.16f+Mathf.Sin(p*30+layer)*.08f*(1-u),0);}
-    else if(id==2){v=new Vector3(face*(.6f+p*7.3f),-.08f+(layer-2.5f)*.055f+Mathf.Sin(p*Mathf.PI)*.12f*(layer-2),0);}
+    else if(id==2){v=new Vector3(face*((model.SignatureRank>0?.05f:.6f)+p*(model.AdvancedGunner&&model.progress.harinCareer==2?10:7.3f)),-.08f+(layer-2.5f)*.055f+Mathf.Sin(p*Mathf.PI)*.12f*(layer-2),0);}
     else {float wave=Mathf.Sin(p*55+layer*2+u*16)*.16f*(1-p);v=new Vector3(face*(.3f+p*4.7f),wave+(layer-2.5f)*.11f*Mathf.Sin(p*Mathf.PI),0);}
     lr.SetPosition(i,origin+v);
    }

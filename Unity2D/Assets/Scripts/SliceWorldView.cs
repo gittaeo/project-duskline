@@ -48,6 +48,8 @@ public sealed partial class SliceGame {
    case 5:return "여과 부품(69m) 회수 → 귀환 → 3층 정수 설비 복구";
    case 6:return "4-1 재희가 남긴 교역로 표식(47m)을 회수하고 귀환";
    case 7:return "4-2 우의 단서(86m) 회수 + 철도 집행자 처치 후 귀환";
+   case 8:return "4-3 털린 비축처 47m·69m 조사 후 귀환";
+   case 9:return "4-4 복구 물자 31m·86m 회수와 집행자 처치 후 귀환";
    default:return "성채 외곽 운송 구역 단서 확보 · 다음 출정을 준비하세요";
   }
  }
@@ -89,7 +91,7 @@ public sealed partial class SliceGame {
    bool can=model.progress.weapon<6&&model.progress.metal>=12*model.progress.weapon&&(model.progress.weapon<3||model.progress.cores>0);
    if(MapButton(new Rect(110,554,480,49),model.progress.weapon>=6?"무기 최대 강화 LV6":"무기 LV"+model.progress.weapon+" → "+(model.progress.weapon+1)+" · 금속"+12*model.progress.weapon+(model.progress.weapon>=3?" 코어1":""),can))model.Upgrade();
    Label(new Rect(614,555,540,46),"금속 "+model.progress.metal+" / 보스 코어 "+model.progress.cores+" · 첫 강화용 금속12 지급",17,Cream);
-   string forge=model.SignatureRank>=3?"고유 무기 최대 각성":!model.SignatureUnlocked?"고유 무기: 4장 · LV4 · 이수형 설계도 필요":SliceModel.SignatureNames[model.activeHero]+" "+(model.SignatureRank==0?"제작":"각성 "+(model.SignatureRank+1))+" · 금속"+model.SignatureMetalCost+" 코어"+model.SignatureCoreCost;
+   string forge=model.SignatureRank>=3?"고유 무기 최대 각성":!model.SignatureUnlocked?"고유 무기: 4장 · LV6 · 이수형 설계도 필요":SliceModel.SignatureNames[model.activeHero]+" "+(model.SignatureRank==0?"제작":"각성 "+(model.SignatureRank+1))+" · 금속"+model.SignatureMetalCost+" 코어"+model.SignatureCoreCost;
    if(MapButton(new Rect(110,608,710,32),forge,model.CanForgeSignature))model.ForgeSignature();
    if(MapButton(new Rect(842,608,326,32),"제작 대상: "+model.HeroName+" →",true)){model.tagCooldown=0;model.Tag();}
   }else{

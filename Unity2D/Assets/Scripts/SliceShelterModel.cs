@@ -12,7 +12,7 @@ public sealed partial class Progress {
 public sealed partial class SliceModel {
  public int shelterFloor=1;public float healCooldown;public string settlement="";
  public bool ChangeFloor(int direction){
-  if(place!=Place.Shelter||Math.Abs(x-8.5f)>1.6f||y>.05f||direction==0)return false;
+  if(restTimer>0||place!=Place.Shelter||Math.Abs(x-8.5f)>1.6f||y>.05f||direction==0)return false;
   int target=shelterFloor+Math.Sign(direction);if(target<1||target>3)return false;
   if(target>progress.floors){
    if(progress.chapter<(target==2?3:5)){Emit("floor-story-lock",x);return false;}
@@ -32,23 +32,18 @@ public sealed partial class SliceModel {
    if(progress.metal<15||progress.boards<4){Emit("purifier-cost",x);return false;}
    progress.metal-=15;progress.boards-=4;progress.purifier=true;Emit("purifier-built",x);
   }else if(shelterFloor==3&&Math.Abs(x)<2){
-   if(progress.farm){Emit("farm-ready",x);return false;}
+   if(progress.farm){return progress.cropStage==3?Harvest():Plant();}
    if(progress.seeds<1||progress.boards<6||progress.metal<10){Emit("farm-cost",x);return false;}
    progress.seeds--;progress.boards-=6;progress.metal-=10;progress.farm=true;Emit("farm-built",x);
   }else if(shelterFloor==2&&Math.Abs(x)<2){Emit("seokju-talk",x);return true;}
   else return false;
   Save?.Invoke();return true;
  }
- public bool Heal(){
-  if(place==Place.Shelter||hp>=100||hp<=0||progress.bandages<1||healCooldown>0)return false;
-  progress.bandages--;hp=Math.Min(100,hp+25);healCooldown=12;Emit("heal",x);Save?.Invoke();return true;
- }
+ public bool Heal(){return UseRecovery(RecoveryItem.Bandage);}
  void SettleShelter(){
   settlement="";
   if(progress.purifier){int before=progress.water;progress.water+=Math.Min(2,Math.Max(0,50-progress.water));progress.waterProduced+=Math.Max(0,progress.water-before);settlement="정수 +"+(progress.water-before)+" / ";}
-  if(progress.farm&&progress.purifier&&progress.water>=3){
-   progress.water-=3;progress.food=Math.Min(50,progress.food+4);progress.harvests++;settlement+="수확 식량 +4 (물 -3) / ";
-  }else if(progress.farm)settlement+="재배 중지: 정수·물 3 필요 / ";
+  if(progress.farm&&progress.cropStage>0&&progress.cropStage<3){progress.cropStage++;settlement+="재배 "+CropState+" / ";}
   int meal=progress.chapter>=5?3:progress.chapter>=4?2:progress.chapter>=3?1:0;
   int consumed=Math.Min(meal,progress.food);progress.food-=consumed;
   settlement+="배급 "+consumed+"/"+meal;

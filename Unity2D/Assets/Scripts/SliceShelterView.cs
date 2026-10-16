@@ -40,8 +40,8 @@ public sealed partial class SliceGame {
    case "purifier-built":Toast("정수 설비 가동 · 물자를 가져오는 성공 귀환마다 물 +2");break;
    case "purifier-ready":Toast("정수 설비 가동 중 · 성공 귀환마다 물 +2, 보관 한도 50");break;
    case "farm-cost":Toast("재배대 설치: 종자 1 + 판재 6 + 금속 10 필요");break;
-   case "farm-built":Toast("재배대 설치 · 정수기 가동과 물 3이 있어야 생산합니다");break;
-   case "farm-ready":Toast("성공 귀환마다 물 3 → 식량 4 · 주민 배급 후 보관");break;
+   case "farm-built":Toast("재배대 설치 · E 또는 B에서 종자1 물3으로 파종하세요");break;
+   case "farm-ready":Toast("파종 후 성공 수색 2회 → 직접 수확 · B에서 관리");break;
    case "heal":Burst(new Vector3(model.x,-1.5f+model.y,0),new Color(.4f,1,.6f),20);Toast("붕대 -1 · 체력 +25");break;
    case "seokju-talk":ShowScene("석주 · 아직 싸 둔 짐",new[]{model.progress.harvests>0?"석주는 가방의 옷 한 벌을 꺼내 선반에 둔다.\n“저도 다음 수확 때 물을 나를게요.”\n짐을 모두 풀지는 않았지만, 오늘은 떠날 준비를 하지 않는다.":"석주는 큰 파란 모자를 벗지 않은 채 짐을 만진다.\n“제가 여기 계속 있어도 되는 거예요?”\n하린은 대답 대신 그의 그릇을 식탁에 놓는다."});break;
    case "mijeong-rescue":Toast("미정: 다음 파종분은 지켜야 해. · 종자와 함께 귀환하세요");break;
@@ -56,7 +56,7 @@ public sealed partial class SliceGame {
     "첫 재배는 실패했다. 가져온 물이 오염되어 곰팡이가 번졌다.\n미정은 상한 작물을 버렸다. 도윤은 배수관을 분리했다.\n3층을 개방하고, 교역 은닉처(69m)에서 새 여과 부품을 가져오세요."});break;
    case "story-6":ShowScene("3장 · 다음 계절을 위한 방",new[]{
     "이현이 가져온 여과 부품을 도윤이 작업대에 늘어놓았다.\n오염된 배수관을 바꾸면 다시 심을 수 있다.\n미정은 식량으로 먹지 않고 남겨 둔 종자를 꺼냈다.",
-    "3층에서 정수 설비와 재배대를 가동하세요.\n물자를 가져오는 성공 귀환마다 물 +2, 재배는 물 3을 써 식량 4를 생산합니다.\n주민 배급은 식량 3입니다. 수색은 계속 필요합니다.",
+    "3층에서 정수 설비와 재배대를 가동하세요.\n물자를 가져오는 성공 귀환마다 물 +2. 파종에 종자1·물3이 필요합니다.\n성공 수색 2회 후 직접 수확하세요. 주민 배급은 식량3입니다.",
     "형의 무전은 여전히 돌아오지 않는다. 그래도 돌아올 방은 늘었다.\n노란 후드의 재희가 교역로 정보를 남겼다. 47m 은닉처의 표식을 확인하자."});break;
   }
  }
@@ -73,7 +73,7 @@ public sealed partial class SliceGame {
    }
    if(model.shelterFloor==3){
     if(model.x<-3)WorldLabel(new Vector3(-6,-.3f,0),model.progress.purifier?"정수기 가동 중":"E 정수기 · 금속15 판재4",Amber);
-    if(Mathf.Abs(model.x)<3)WorldLabel(new Vector3(0,-.3f,0),model.progress.farm?"재배대 · 성공 귀환 시 수확":"E 재배대 · 금속10 판재6",Amber);
+    if(Mathf.Abs(model.x)<3)WorldLabel(new Vector3(0,-.3f,0),model.progress.farm?"재배 · "+model.CropState+" · E 관리":"E 재배대 · 금속10 판재6",Amber);
     Box(new Rect(350,270,580,36),Panel);Label(new Rect(364,273,555,29),"정수 "+(model.progress.purifier?"가동":"미가동")+" / 재배 "+(model.progress.farm?"설치":"미설치")+" / 누적 수확 "+model.progress.harvests+"회",17,Cream);
    }
    if(model.settlement!="")Label(new Rect(350,541,750,27),"지난 수색 정산: "+model.settlement,16,Amber);

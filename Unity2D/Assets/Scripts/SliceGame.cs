@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -18,8 +18,8 @@ public sealed partial class SliceGame:MonoBehaviour {
   Application.targetFrameRate=60;QualitySettings.vSyncCount=0;font=Resources.Load<Font>("DuskFont");pixel=Texture2D.whiteTexture;
   square=Sprite.Create(pixel,new Rect(0,0,1,1),new Vector2(.5f,.5f),1);
   string[] args=Environment.GetCommandLineArgs();awakenedCapture=Array.IndexOf(args,"--awakened")>=0;for(int i=0;i<args.Length-1;i++)if(args[i]=="--capture"){capturePath=args[i+1];automated=true;}
-  savePath=Path.GetFullPath(Path.Combine(Application.dataPath,"..","Save","progress-v10.json"));
-  model=new SliceModel(automated?null:LoadProgress());model.GrantStarterKit();model.Signal+=OnSignal;model.Save+=SaveProgress;
+  savePath=Path.GetFullPath(Path.Combine(Application.dataPath,"..","Save","progress-v13.json"));
+  model=new SliceModel(automated?null:LoadProgress());if(automated&&Array.IndexOf(args,"--artillery")>=0)model.progress.harinCareer=2;model.GrantStarterKit();model.Signal+=OnSignal;model.Save+=SaveProgress;
   cam=new GameObject("Side camera").AddComponent<Camera>();cam.orthographic=true;cam.orthographicSize=3.75f;cam.transform.position=new Vector3(0,-.25f,-10);cam.clearFlags=CameraClearFlags.SolidColor;cam.backgroundColor=new Color(.02f,.025f,.04f);cam.gameObject.AddComponent<AudioListener>();
   world=new GameObject("Four connected districts");shelter=new GameObject("Shelter rooms");
   for(int i=0;i<6;i++){
@@ -43,17 +43,18 @@ public sealed partial class SliceGame:MonoBehaviour {
   messageUntil=Time.unscaledTime+7;SaveProgress();Render(0);if(!automated&&!model.progress.prologueSeen)ShowStory(0);else if(!automated&&model.progress.chapter==3&&!model.progress.rescueBriefed){model.progress.rescueBriefed=true;ShowScene("2장 · 문 앞의 두 사람",new[]{"석주가 다친 어머니를 부축하고 문 앞에 섰다.\n하린은 상처를 확인하고, 필요한 항생제가 없다고 말했다.\n이현은 형을 찾는 출정을 미룬다. 교역 은닉처(69m)에서 약을 구해야 한다."});SaveProgress();}
  }
  Progress LoadProgress(){
-  foreach(string path in new[]{savePath,savePath+".bak","D:/Unity/Duskline2D-Lore-v11/Save/progress-v10.json","D:/Unity/Duskline2D-Expansion-v10/Save/progress-v10.json","D:/Unity/Duskline2D-Motion-v09/Save/progress-v9.json","D:/Unity/Duskline2D-Tag-v08/Save/progress-v8.json","D:/Unity/Duskline2D-World-v07/Save/progress-v7.json","D:/Unity/Duskline2D-Action-v06/Save/progress-v6.json","D:/Unity/Duskline2D-Shelter-v05/Save/progress-v5.json","D:/Unity/Duskline2D-Tag-v04/Save/progress-v4.json","D:/Unity/Duskline2D-Story-v03/Save/progress-v3.json","D:/Unity/Duskline2D-Combat-v02/Save/progress-v2.json"})if(File.Exists(path))try{var data=JsonUtility.FromJson<Progress>(File.ReadAllText(path));if(data!=null){data.Validate();return data;}}catch(Exception e){Debug.LogWarning("Save recovery: "+e.Message);}
+  foreach(string path in new[]{savePath,savePath+".bak","D:/Unity/Duskline2D-Awakening-v12/Save/progress-v10.json","D:/Unity/Duskline2D-Lore-v11/Save/progress-v10.json","D:/Unity/Duskline2D-Expansion-v10/Save/progress-v10.json","D:/Unity/Duskline2D-Motion-v09/Save/progress-v9.json","D:/Unity/Duskline2D-Tag-v08/Save/progress-v8.json","D:/Unity/Duskline2D-World-v07/Save/progress-v7.json","D:/Unity/Duskline2D-Action-v06/Save/progress-v6.json","D:/Unity/Duskline2D-Shelter-v05/Save/progress-v5.json","D:/Unity/Duskline2D-Tag-v04/Save/progress-v4.json","D:/Unity/Duskline2D-Story-v03/Save/progress-v3.json","D:/Unity/Duskline2D-Combat-v02/Save/progress-v2.json"})if(File.Exists(path))try{var data=JsonUtility.FromJson<Progress>(File.ReadAllText(path));if(data!=null){data.Validate();return data;}}catch(Exception e){Debug.LogWarning("Save recovery: "+e.Message);}
   return new Progress();
  }
  void SaveProgress(){
-  if(automated)return;
+  if(automated)return;model.progress.vitality=model.drill?model.progress.vitality:Mathf.Max(1,model.hp);
   try{Directory.CreateDirectory(Path.GetDirectoryName(savePath));string temp=savePath+".tmp";File.WriteAllText(temp,JsonUtility.ToJson(model.progress,true));if(File.Exists(savePath))File.Replace(temp,savePath,savePath+".bak");else File.Move(temp,savePath);}
   catch(Exception e){Debug.LogError("Save failed: "+e.Message);Toast("저장 실패 · 로그를 확인해주세요");}
  }
+ void OnApplicationQuit(){if(model!=null)SaveProgress();}
  void Toast(string value){message=value;messageUntil=Time.unscaledTime+4;}
  void OnSignal(string value){
-  StorySignal(value);TagSignal(value);ShelterSignal(value);ActionSignal(value);WorldSignal(value);CoopSignal(value);MotionSignal(value);ChapterFourSignal(value);SignatureSignal(value);
+  StorySignal(value);TagSignal(value);ShelterSignal(value);ActionSignal(value);WorldSignal(value);CoopSignal(value);MotionSignal(value);ChapterFourSignal(value);SignatureSignal(value);SurvivalSignal(value);
   switch(value){
    case "depart":Toast("골목 → 정비소 → 진료소 → 폐철도 · 양 끝에서 귀환");break;
    case "loot":Burst(new Vector3(model.lastEventX,-2,0),Amber,30);sound.PlayOneShot(lootClip,.2f);Toast("보급품 확보  ·  수색 금속 "+model.carried);break;
@@ -92,10 +93,10 @@ public sealed partial class SliceGame:MonoBehaviour {
   if(model.combo==2){Burst(new Vector3(model.x+model.face*1.1f,-2.5f,0),Amber,22);shake=.13f;}
  }
  void Update(){
-  if(model==null)return;if(!automated&&NarrativeInput())return;if(Input.GetKeyDown(KeyCode.Escape))paused=!paused;
+  if(model==null)return;if(!automated&&(InventoryInput()||NarrativeInput()))return;if(Input.GetKeyDown(KeyCode.Escape))paused=!paused;
   float raw=Time.deltaTime;if(!paused){
    float move=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);
-   if(!automated){if(Input.GetKeyDown(KeyCode.F2))reducedImpact=!reducedImpact;if(Input.GetKeyDown(KeyCode.K))model.Skill();if(Input.GetKeyDown(KeyCode.L))model.Skill(true);if(Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.UpArrow))model.ChangeFloor(1);if(Input.GetKeyDown(KeyCode.R))model.ChangeFloor(-1);if(Input.GetKeyDown(KeyCode.H)&&!model.Heal())Toast("치료: 수색 중 붕대 1개 필요 · 재사용 12초 · 체력 부족 시 사용");}
+   if(!automated){if(Input.GetKeyDown(KeyCode.F2))reducedImpact=!reducedImpact;if(Input.GetKeyDown(KeyCode.K))model.Skill();if(Input.GetKeyDown(KeyCode.L))model.Skill(true);if(Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.UpArrow))model.ChangeFloor(1);if(Input.GetKeyDown(KeyCode.R))model.ChangeFloor(-1);if(Input.GetKeyDown(KeyCode.H)&&!model.Heal())Toast("치료: 붕대1 필요 · 재사용12초 · 공격/스킬 종료 후 사용");}
    if(Input.GetKeyDown(KeyCode.Q)&&!automated){if(!model.Tag())Toast(model.PartySize<2?"스토리에서 동료를 구조하면 태그가 열립니다":"태그 재사용 "+model.tagCooldown.ToString("0.0")+"초 · 끝나기 직전 예약 가능");}
    if(Input.GetKeyDown(KeyCode.F6)&&model.place==Place.Shelter&&!model.progress.raidPending)model.StartRaid(true);
    float dt=impactStop>0?raw*.04f:hitSlow>0?raw*.08f:raw;hitSlow=Mathf.Max(0,hitSlow-raw);
@@ -112,8 +113,8 @@ public sealed partial class SliceGame:MonoBehaviour {
   if(shown!=model.place){shown=model.place;cam.transform.position=new Vector3(indoors?0:model.place==Place.Raid?0:-1.5f,-.25f,-10);slash.enabled=false;slashLife=0;foreach(var p in glints)Destroy(p.t.gameObject);glints.Clear();}
 
   hero.flipX=model.face<0;hero.transform.position=new Vector3(model.x,-2.6f+model.y,0);
-  hero.transform.localScale=Vector3.one;RenderStoryArt();RenderTagArt();RenderShelter();RenderWalkV09();RenderActionFX();RenderSkillMotion();RenderWorldWeather();RenderCoop();MatchActorScale();RenderWeaponRadiance();
-  hero.color=model.invulnerable>0&&Mathf.Sin(model.time*45)>0?new Color(1,.65f,.6f,.7f):Color.white;
+  hero.transform.localScale=Vector3.one;RenderStoryArt();RenderTagArt();RenderShelter();RenderWalkV09();RenderActionFX();RenderSkillMotion();RenderWorldWeather();RenderCoop();MatchActorScale();
+  hero.color=model.invulnerable>0&&Mathf.Sin(model.time*45)>0?new Color(1,.65f,.6f,.7f):Color.white;RenderWeaponRadiance();
   for(int i=0;i<foes.Count;i++){
    var sr=foes[i];bool active=i<model.enemies.Count&&model.enemies[i].hp>0&&model.enemies[i].delay<=0&&!indoors;sr.enabled=active;if(!active)continue;
    var e=model.enemies[i];sr.flipX=e.attack>0||e.dash>0?e.direction<0:e.x>model.x;
@@ -134,26 +135,32 @@ public sealed partial class SliceGame:MonoBehaviour {
  }
  void Effects(float dt){
   shake=Mathf.Max(0,shake-dt);screenDamage=Mathf.Max(0,screenDamage-dt);slashLife=Mathf.Max(0,slashLife-dt);slash.enabled=slashLife>0;slash.widthMultiplier=.10f*slashLife/.18f;
-  ActionEffects(dt);MotionEffects(dt);ghostClock-=dt;if((model.roll>0||model.attack>0||model.skillTimer>0)&&hero.enabled&&ghostClock<=0){ghostClock=.04f;var r=Make("Motion echo",hero.sprite,hero.transform.position,8);r.flipX=hero.flipX;r.transform.localScale=hero.transform.localScale;r.transform.rotation=hero.transform.rotation;r.color=new Color(.65f,.82f,1,.22f);glints.Add(new Glint{t=r.transform,sprite=r,life=.14f});}
+  ActionEffects(dt);MotionEffects(dt);ghostClock-=dt;if((model.roll>0||model.attack>0||model.skillTimer>0)&&hero.enabled&&ghostClock<=0){ghostClock=.04f;var r=Make("Motion echo",hero.sprite,hero.transform.position,8);r.flipX=hero.flipX;r.transform.localScale=hero.transform.localScale;r.transform.rotation=hero.transform.rotation;var echo=WeaponTint();echo.a=model.SignatureRank>0?.32f:.22f;r.color=echo;glints.Add(new Glint{t=r.transform,sprite=r,life=.14f});}
   for(int i=glints.Count-1;i>=0;i--){var p=glints[i];p.life-=dt;p.t.position+=p.velocity*dt;p.velocity+=Vector3.down*dt*.2f;var c=p.sprite.color;c.a=Mathf.Min(c.a,p.life*2);p.sprite.color=c;if(p.life<=0){Destroy(p.t.gameObject);glints.RemoveAt(i);}}
  }
- readonly bool[,] seenWalk=new bool[4,8];int motionHero=-1,skillShots,attackShots;readonly bool[,] seenAttack=new bool[4,3];bool motionSkill,motionCaptured;
+ readonly bool[] seenIdle=new bool[4],seenReverse=new bool[4];readonly bool[,] seenWalk=new bool[4,8];int motionHero=-1,skillShots,attackShots;readonly bool[,] seenAttack=new bool[4,3];bool motionSkill,motionCaptured;
  void Automation(float dt){
   captureClock+=dt;if(captureClock<.5f)return;
   int id=(int)((captureClock-.5f)/6.5f);float phase=(captureClock-.5f)%6.5f;
-  if(id>=5){int seen=0;foreach(bool value in seenWalk)if(value)seen++;File.WriteAllText(capturePath+"-run.txt","Walk frames "+seen+"/32\nSkill captures "+skillShots+"/4\nAttack captures "+attackShots+"/12");Application.Quit();return;}
+  if(id>=6){int seen=0;foreach(bool value in seenWalk)if(value)seen++;File.WriteAllText(capturePath+"-run.txt","Walk frames "+seen+"/32\nSkill captures "+skillShots+"/4\nAttack captures "+attackShots+"/12");Application.Quit();return;}
+  if(id==5){
+   model.place=Place.Shelter;model.progress.floors=3;model.progress.farm=model.progress.clinic=model.progress.purifier=true;model.progress.cropStage=3;model.progress.herbs=4;model.progress.medicine=2;model.progress.relics=1;model.progress.food=8;model.progress.water=10;model.hp=43;model.activeHero=2;inventory=true;inventoryTab=Mathf.Min(2,(int)(phase/2));
+   if(phase%2>.8f&&captureStage==2+inventoryTab){ScreenCapture.CaptureScreenshot(capturePath+"-inventory-"+inventoryTab+".png");captureStage++;}return;
+  }
   if(id==4){
    model.progress.chapter=6;model.attack=model.skillTimer=model.velocityX=0;model.queued=false;
    if(phase<2){model.place=Place.Expedition;model.x=55.5f;cam.transform.position=new Vector3(57,-.25f,-10);if(captureStage==0&&phase>.8f){ScreenCapture.CaptureScreenshot(capturePath+"-suhyeong.png");captureStage=1;}}
    else {model.place=Place.Shelter;model.shelterFloor=1;model.x=0;if(captureStage==1&&phase>3){ScreenCapture.CaptureScreenshot(capturePath+"-taeo.png");captureStage=2;}}
    return;
   }
-  if(id!=motionHero){if(awakenedCapture){model.progress.weapon=6;model.progress.resonanceBlueprint=true;for(int n=0;n<4;n++)model.progress.signatureRanks[n]=3;}motionHero=id;motionSkill=motionCaptured=false;if(model.place==Place.Shelter){model.progress.chapter=3;model.Depart();}model.enemies.Clear();model.x=18;model.y=model.vy=0;model.activeHero=id;model.skillTimer=0;model.skillCooldowns[id]=0;model.stamina=100;cam.transform.position=new Vector3(18,-.25f,-10);shown=Place.Expedition;}
-  model.Tick(dt,phase<2.2f?1:0,false,phase>4.2f&&phase<5.9f,false,false);
+  if(id!=motionHero){if(awakenedCapture){model.progress.weapon=6;model.progress.resonanceBlueprint=true;for(int n=0;n<4;n++)model.progress.signatureRanks[n]=3;}motionHero=id;motionSkill=motionCaptured=false;if(model.place==Place.Shelter){model.progress.chapter=3;model.Depart();}model.enemies.Clear();model.x=18;model.y=model.vy=0;model.activeHero=id;model.invulnerable=0;model.face=1;model.skillTimer=0;model.skillCooldowns[id]=0;model.stamina=100;cam.transform.position=new Vector3(18,-.25f,-10);shown=Place.Expedition;}
+  model.Tick(dt,phase<.2f?0:phase<2.2f?1:0,false,phase>4.2f&&phase<5.9f,false,false);
+  if(phase<.2f&&!seenIdle[id]){seenIdle[id]=true;ScreenCapture.CaptureScreenshot(capturePath+"-idle-"+id+".png");}
+  if(phase>6.1f&&!seenReverse[id]){seenReverse[id]=true;model.face=-1;ScreenCapture.CaptureScreenshot(capturePath+"-reverse-"+id+".png");}
   if(phase>4.2f&&model.attackHit&&!seenAttack[id,model.combo]){seenAttack[id,model.combo]=true;attackShots++;ScreenCapture.CaptureScreenshot(capturePath+"-attack-"+id+"-"+model.combo+".png");}
   if(phase<2.2f){int frame=WalkFrame();if(!seenWalk[id,frame]){seenWalk[id,frame]=true;if(frame==3||frame==6)ScreenCapture.CaptureScreenshot(capturePath+"-walk-"+id+"-"+frame+".png");}}
   if(phase>=2.3f&&!motionSkill){model.Skill();motionSkill=true;}
-  if(motionSkill&&!motionCaptured&&model.skillElapsed>(id==1?.42f:.22f)){ScreenCapture.CaptureScreenshot(capturePath+"-skill-"+id+".png");motionCaptured=true;skillShots++;}
+  if(motionSkill&&!motionCaptured&&model.skillElapsed>(id==1||model.AdvancedGunner&&model.progress.harinCareer==2?.42f:.22f)){ScreenCapture.CaptureScreenshot(capturePath+"-skill-"+id+".png");motionCaptured=true;skillShots++;}
  }
  void OnGUI(){
   if(model==null)return;float scale=Mathf.Min(Screen.width/1280f,Screen.height/720f);
@@ -171,7 +178,7 @@ public sealed partial class SliceGame:MonoBehaviour {
   if(inside){
    if(model.raidWarning>=0){Box(new Rect(350,159,580,42),new Color(.30f,.055f,.04f,.95f));Label(new Rect(370,167,555,28),"습격 경보  "+Mathf.CeilToInt(model.raidWarning)+"초 · 문을 수리하고 대비하세요",19,Cream);}
    if(model.shelterFloor==1){WorldLabel(new Vector3(-7,-.25f,0),model.progress.weapon>=6?"강화 완료":"E 무기 강화 · 금속 "+12*model.progress.weapon,Amber);
-   WorldLabel(new Vector3(0,-.25f,0),"E 휴식",Cream);
+   WorldLabel(new Vector3(0,-.25f,0),"E 침대 · 식량1 물1 / 6초",Cream);
    WorldLabel(new Vector3(5.7f,-.25f,0),"E 방어문 수리 · 금속 5",Cream);
    WorldLabel(new Vector3(9,-.25f,0),model.progress.raidPending?"E 즉시 방어":"E 수색 출발",Amber);}
   }else{
@@ -183,7 +190,7 @@ public sealed partial class SliceGame:MonoBehaviour {
    }else WorldLabel(new Vector3(-5.8f,-1.4f,0),"방어문  "+model.progress.gate,Amber);
   }
   if(screenDamage>0)Box(new Rect(0,0,1280,720),new Color(.65f,0,0,screenDamage*.32f));
-  DrawSignatureNPCs();DrawTagHUD();DrawShelterHUD();DrawActionHUD();DrawNarrative();DrawWorldHUD();
+  DrawSignatureNPCs();DrawTagHUD();DrawShelterHUD();DrawActionHUD();DrawNarrative();DrawWorldHUD();DrawInventory();
   if(paused){Box(new Rect(0,0,1280,720),new Color(0,0,0,.7f));Box(new Rect(370,236,540,230),Panel);Label(new Rect(402,264,475,40),"일시 정지",30,Cream);Label(new Rect(402,321,475,70),"J키를 연이어 눌러 3단 공격\n좀비의 붉은 예고를 보고 SHIFT로 회피",19,Amber);Label(new Rect(402,411,475,28),"ESC로 계속 · 마우스 클릭은 공격하지 않습니다",16,Cream);}
  }
  void WorldLabel(Vector3 pos,string text,Color color){var p=cam.WorldToViewportPoint(pos);if(p.x<.05f||p.x>.95f)return;float x=p.x*1280,y=(1-p.y)*720;Box(new Rect(x-110,y-16,220,30),Panel);Label(new Rect(x-101,y-13,206,28),text,14,color);}

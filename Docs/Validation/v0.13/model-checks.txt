@@ -1,0 +1,224 @@
+223 checks passed
+Starts in shelter
+Can depart
+World extended beyond 64 units
+World population
+No distant interaction
+Loot granted
+Loot idempotent
+Far extraction
+Extraction idempotent
+Failure 70 percent floor
+One hit per attack
+Thrust queues uppercut
+Uppercut queues smash
+Combo resets after finisher
+Expired combo restarts
+Attack telegraph before damage
+Normal attack deals one hit
+Runner telegraph
+Runner charges after telegraph
+Dodge avoids charge
+Jump starts
+Jump lands
+Upgrade atomic cost
+Second upgrade
+Upgrade cap
+Insufficient resources preserved
+Repair capped and charged
+Third return triggers warning
+Cannot evade pending raid
+Warning starts raid
+Raid reward once
+Raid reward idempotent
+Practice cannot farm or damage
+Raid failure recoverable
+Progress serialization
+Mouse attack removed
+Crouch movement speed
+Jump leaves crouch
+New jump lands
+Walking accelerates
+Walking decelerates
+Mission supplies ready
+Failure cannot advance story
+First mission advances on return
+Rescue needs parts
+Rescue pending until return
+Doyun joins once
+Harin joins and chapter ends
+Story return idempotent
+Story state saves
+Serin available for tag from first sortie
+Doyun unlocked by story
+Tag cooldown blocks spam
+Locked Harin skipped for Serin
+Tag grants brief invulnerability
+Harin joins rotation
+Harin ranged hit once
+Combat tag cancels attack into Serin
+Party rotates back to Ihyeon
+Doyun bypasses brute armor
+Railway with brutes generated
+Old endpoint now continues to railway
+Extended endpoint extracts
+Brute has long telegraph
+Brute slam damage
+Floors require stair proximity
+Second floor atomic construction
+Third floor story lock
+Descend stairs
+Revisit floor costs nothing
+Clinic installed
+Bandage crafting requires water
+Bandage crafting atomic
+Bandage heals 25
+Healing cooldown blocks spam
+Medicine mission item
+Failed medicine run cannot progress
+Seokju story advances on successful medicine return
+Mijeong rescue with seeds
+Seeds join and first crop failure recorded
+Filter recovered and chapter three finished
+Third floor construction
+Purifier repaired after filter quest
+Farm consumes one seed
+Installed farm starts planting without reconstruction
+Planted farm cannot charge twice
+Plant grows one stage then rations settle
+Failed run produces nothing
+Expansion save roundtrip
+Purifier never deletes water above production cap
+Floor shortage preserves resources
+Raid returns upper floor player to defense
+Explicit planting
+Cannot harvest immature crop
+Crop waits for player harvest
+Harvest grants once and plays story once
+Empty return cannot farm resources
+No skill in shelter
+Insufficient skill stamina preserved
+Skill stamina charged once
+Active skill cannot repeat
+Ihyeon skill hits once
+Skill cooldown enforced
+Skill tag buffers without cancelling impact
+Doyun shockwave hits before queued tag
+Buffered skill tag executes after skill
+Harin fires exactly three skill shots
+Ultimate requires full focus
+Ultimate consumes focus
+Ultimate single damage without self-refund
+Tight dodge grants counter and focus
+Counter bonus consumed on next attack
+Empty stamina blocks dodge
+Stamina regenerates
+Air attack becomes diving finisher
+Six kill contract paid on return
+Contract cannot double pay
+Failed run has no contract bonus
+Starter upgrade available once before departure
+Story locked destination blocked
+Map departure to first district
+Failed sortie also changes weather
+Clinic entry preserves tools objective before rescue
+Safe map return banks supplies
+Map return idempotent
+Nearby enemy blocks map escape
+Projectile blocks map escape
+Map floor travel respects unlocks
+First mission starts with basic infected
+Story adds runner and stat growth
+Later story introduces ranged enemy and boss
+Boss enters charge phase below half health
+Ranged infected releases projectile after telegraph
+Crouch avoids high acid shot
+Standing player hit by acid
+Boss reward reserved on defeat
+Boss core banks only on successful return
+Failure loses unbanked boss core
+High tier upgrade needs core
+Core upgrade consumes atomic cost
+Weapon upgrade cap six
+First expedition tag starts two-character skill
+Coop applies exactly two hits
+Tag works while coop cooldown active
+Air tag preserves jump height
+Return clears cooperative attack and buffered input
+Dodge tag buffers
+Dodge tag executes on landing
+Serin has independent skill slot
+Serin electric lunge strikes at extended reach
+Four member roster after rescue
+Roster member swap 0
+Roster member swap 1
+Roster member swap 2
+Roster member swap 3
+Four character roster wraps
+Coop boss kill rewards exactly once
+Walk cycle does not advance against map boundary
+Walk cycle follows actual ground displacement
+Air movement does not advance ground gait
+Chapter four route marker objective
+Failed route marker run does not advance
+Route marker return unlocks orange raincoat mission
+Raincoat alone cannot finish boss mission
+Raincoat and boss complete mission
+Chapter four front half completes on return
+Expanded story survives save validation
+Repeat return cannot exceed story cap
+Lore remains unbanked during expedition
+Failed expedition loses unbanked lore
+Successful extraction banks lore
+Collected lore cannot duplicate
+Later lore locked behind story progress
+Lore survives save roundtrip
+Unknown lore bits removed
+Fortress record unlocks with raincoat mission
+Blueprint required for signature forge
+Suhyeong hands over blueprint
+Failed return loses blueprint
+Safe return banks blueprint
+Forge charges exact resources
+Signature damage belongs to its owner
+Tag does not inherit another signature
+Signature has three ranks
+Field forging blocked
+Signature and blueprint save roundtrip
+Legacy saves initialize signature ranks
+Witness requires safe conversation distance
+LV5 cannot craft signature
+LV6 permits signature crafting
+Gunner can select artillery in shelter
+Career cannot change during expedition
+Artillery charges one powerful long-range shot
+Gunner fires six distinct pulses
+Successful return preserves injuries
+Departure does not heal
+Defeat rescue leaves one HP
+Bed charges resources once
+Cannot depart mid-rest
+Bed restores 45 after six seconds
+Free rest cannot heal above 30
+Resource starvation allows emergency rest
+Emergency rest is partial
+Medicine consumes one and heals 50
+Recovery cooldown prevents instant chaining
+Recovery artifact is consumed for full heal
+Full health does not consume bandage
+Saved injuries restored
+Practice restores original health
+Real raid does not heal
+Plant consumes exact costs
+Failure does not grow crops
+Empty return does not grow crops
+Harvest supplies herbs and seed
+Medicine crafting consumes herbs and water
+Relic recipe rejects missing ingredients
+Relic recipe atomic cost
+Two raided caches complete investigation
+Failure does not apply betrayal consequences
+Betrayal consequences applied on story completion
+Restitution requires boss
+Restitution opens chapter five and awards artifact once
+Chapter cap prevents duplicate story artifact

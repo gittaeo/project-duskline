@@ -25,7 +25,7 @@ public sealed partial class SliceModel {
   return ReturnHome(true);
  }
  public bool VisitFloor(int floor){
-  if(place!=Place.Shelter||floor<1||floor>progress.floors)return false;
+  if(restTimer>0||place!=Place.Shelter||floor<1||floor>progress.floors)return false;
   shelterFloor=floor;x=0;ResetCombat();Emit("floor",x);return true;
  }
  void PrepareRegion(){

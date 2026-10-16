@@ -7,7 +7,7 @@ public sealed partial class SliceModel {
  public static readonly string[] HeroNames={"강이현","도윤","하린","서린"};
  public int NextHero {get {for(int n=1;n<=4;n++){int id=(activeHero+n)%4;if(id==0||id==3||id==1&&progress.chapter>=2||id==2&&progress.chapter>=3)return id;}return 0;}}
  public bool Tag(){
-  if(hp<=0||tagCooldown>.4f)return false;
+  if(restTimer>0||hp<=0||tagCooldown>.4f)return false;
   if(roll>0||skillTimer>0||tagCooldown>0){tagBuffer=1.2f;Emit("tag-buffer",x);return true;}
   ExecuteTag();return true;
  }

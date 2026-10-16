@@ -109,7 +109,9 @@ public sealed partial class SliceGame {
   if(model.progress.chapter==5)return (model.missionMask&32)!=0?"정수 부품 확보 · 성공 귀환":"배수관 부품(69m) 회수 → 귀환 → 3층 정수기 수리";
   if(model.progress.chapter==6)return (model.missionMask&8)!=0?"교역로 표식 확보 · 성공 귀환":"재희의 교역로 표식(47m) 회수 → 귀환";
   if(model.progress.chapter==7)return "우의 단서(86m) "+((model.missionMask&64)!=0?"확보":"미확보")+" · 집행자 "+(model.bossDefeated?"처치":"처치 필요")+" → 귀환";
-  return "성채 운송 구역 단서 확보 · 쉘터 생산과 장비 강화";
+  if(model.progress.chapter==8)return "털린 보관함(47m·69m) 조사 → 귀환";
+  if(model.progress.chapter==9)return "복구 물자(31m·86m) 회수 · 집행자 처치 → 귀환";
+  return "4장 완료 · 성채의 계약을 앞두고 쉘터 비축";
  }
  void DrawNarrative(){
   if(model.place==Place.Expedition){
